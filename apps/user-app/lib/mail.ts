@@ -8,8 +8,8 @@ export async function sendMail({email, otp }: SendEmailArg){
         host: "sandbox.smtp.mailtrap.io",
         port: 2525,
         auth: {
-          user: "ce67b48a4eb409",
-          pass: "41e6471f5fa1b4"
+          user: process.env.SMTP_USER_ID,
+          pass: process.env.SMTP_USER_PASSWORD
         }
     });
     const result = await transport.sendMail({
