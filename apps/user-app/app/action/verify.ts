@@ -1,73 +1,66 @@
 'use server'
 import  prisma  from "@paytm-repo/db/client";
+import { otpSchema } from "@repo/schema/zod";
 import jwt, { JwtPayload } from "jsonwebtoken"
 
-export async function verifyingEmailOtp(data : { otp : string, userIdToken : string }){
+export async function verifyingEmailOtp(data : { otp : string, otpToken : string }){
     try {
-        const idOfUser = jwt.verify(data.userIdToken, process.env.JWT_SECRET || 'secret') as string;
+        const tokenForEmailVerification = await prisma.emailOtpVerification.findFirst({
+            where : {
+                token : data.otpToken
+            },
+            include : {
+                user : true
+            }
+        })
         const currTime = Date.now() + 0 + "";
-        if(idOfUser){
-            try {
-                const result = await prisma.user.findFirst({
-                    where : {
-                        id : idOfUser
-                    }
-                })
-                if(result){
-                    if(result.otpExpiry == null){
+        if(tokenForEmailVerification){
+            if(tokenForEmailVerification.user.isEmailVerified){
+                return{
+                    success : false,
+                    message : "Email already Verified"
+                }
+            }
+            if(tokenForEmailVerification.otpExpiry > currTime){
+                if(tokenForEmailVerification.otp == data.otp){
+                    try {
+                        const update = await prisma.user.update({
+                            data : {
+                                isEmailVerified : true
+                            },
+                            where : {
+                                id : tokenForEmailVerification.userId
+                            }
+                        })
+                        if(update){
+                            return{
+                                success : true,
+                                message : "Email Verified Successfully"
+                            }
+                        }
+                    } catch (error) {
                         return{
                             success : false,
-                            message : "Invalid Token Error.",
-                        }
-                    }else{
-                        if(result.otpExpiry > currTime){
-                            if(result.otp == data.otp){
-                                try {
-                                    const update = await prisma.user.update({
-                                        data : {
-                                            isEmailVerified : true
-                                        },
-                                        where : {
-                                            id : idOfUser
-                                        }
-                                    })
-                                    if(update){
-                                        return{
-                                            success : true,
-                                            message : "Email Verified Successfully"
-                                        }
-                                    }
-                                } catch (error) {
-                                    return{
-                                        success : false,
-                                        message : "Resend otp and try again",
-                                    }
-                                }
-                                
-                            }else{
-                                return{
-                                    success : false,
-                                    message : "Incorrect OTP",
-                                } 
-                            }
-                        }else{
-                            return{
-                                success : false,
-                                message : "OTP expired. Resend and try again!",
-                            }
+                            message : "Resend otp and try again",
                         }
                     }
+                    
                 }else{
                     return{
                         success : false,
-                        message : "Invalid Token Error.",
-                    }
+                        message : "Incorrect OTP",
+                    } 
                 }
-            } catch (error) {
+            }else{
                 return{
                     success : false,
-                    message : "Invalid Token Error.",
+                    message : "OTP expired. Resend and try again!",
                 }
+            }
+        }else{
+            return{
+                success : false,
+                message : "Invalid Token Error.",
             }
         }
     } catch (error) {
@@ -83,61 +76,59 @@ export async function verifyingEmailOtp(data : { otp : string, userIdToken : str
 
 
 
-export async function verifyingPassOtpForChangePass(data : { otp : string, userIdToken : string }){
+export async function verifyingPassOtpForChangePass(data : { otp : string, otpToken : string }){
     try {
-        const idOfUser = jwt.verify(data.userIdToken, process.env.JWT_SECRET || 'secret') as string;
-        const currTime = Date.now() + 0 + "";
-        if(idOfUser){
-            try {
-                const result = await prisma.user.findFirst({
-                    where : {
-                        id : idOfUser
+        const tokenForEmailVerification = await prisma.emailOtpVerification.findFirst({
+            where : {
+                token : data.otpToken
+            },
+            include : {
+                user : {
+                    select : {
+                        email : true,
+                        isEmailVerified : true
                     }
-                })
-                if(result){
-                    if(result.otpExpiry == null){
-                        return{
-                            success : false,
-                            message : "Invalid Token Error.",
+                }
+            }
+        })
+        const currTime = Date.now() + 0 + "";
+        if(tokenForEmailVerification){
+            if(!tokenForEmailVerification.user.isEmailVerified){
+                return{
+                    success : false,
+                    message : "Email not Verified"
+                }
+            }
+            if(tokenForEmailVerification.otpExpiry > currTime){
+                if(tokenForEmailVerification.otp == data.otp){
+                    await prisma.emailOtpVerification.update({
+                        where : {
+                            token : data.otpToken
+                        },
+                        data : {
+                            isVerified : true
                         }
-                    }else{
-                        if(!result.isEmailVerified){
-                            return{
-                                success : false,
-                                message : "Email not Verified"
-                            }
-                        }
-                        if(result.otpExpiry > currTime){
-                            if(result.otp == data.otp){
-                                return{
-                                    success : true,
-                                    message : "Otp Verified Successfully now proceed to change password",
-                                    userIdToken : data.userIdToken
-                                } 
-                            }else{
-                                return{
-                                    success : false,
-                                    message : "Incorrect OTP",
-                                }
-                            }
-                        }else{
-                            return{
-                                success : false,
-                                message : "OTP expired. Resend and try again!",
-                            }
-                        }
+                    })
+                    return{
+                        success : true,
+                        message : "Verified successfully ! Now process to change password",
                     }
                 }else{
                     return{
                         success : false,
-                        message : "Invalid Token Error.",
-                    }
+                        message : "Incorrect OTP",
+                    } 
                 }
-            } catch (error) {
+            }else{
                 return{
                     success : false,
-                    message : "Invalid Token Error.",
+                    message : "OTP expired. Resend and try again!",
                 }
+            }
+        }else{
+            return{
+                success : false,
+                message : "Invalid Token Error.",
             }
         }
     } catch (error) {

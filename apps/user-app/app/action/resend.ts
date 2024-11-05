@@ -1,47 +1,68 @@
 'use server'
 import  prisma  from "@paytm-repo/db/client";
-import jwt, { JwtPayload } from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { sendMail } from "../../lib/mail";
 
-export async function resendOTPForEmailVerification({userIdToken} : {userIdToken : string}){
-    const idOfUser = jwt.verify(userIdToken, process.env.JWT_SECRET || '') as string;
+export async function resendOTPForEmailVerification({otpToken} : {otpToken : string}){
     try {
-        const existUser = await prisma.user.findFirst({
+        const userDataWithOtpField = await prisma.emailOtpVerification.findFirst({
             where : {
-                id : idOfUser
+                token : otpToken
+            },
+            include : {
+                user : {
+                    select : {
+                        email : true,
+                        isEmailVerified : true
+                    }
+                }
             }
         })
-        if(existUser && existUser.isEmailVerified){
+        if(userDataWithOtpField && userDataWithOtpField.user.isEmailVerified){
             return{
                 success : false,
                 message : "Email already verified"
             }
         }
-        if(existUser && !existUser.isEmailVerified){
-            var randomOtp = '';
-            for(var i = 0 ; i < 6 ; i++){
-                randomOtp += Math.floor(Math.random()*10);
-            }
-            const expTime = Date.now() + 5*60*1000 + '';
-            const update = await prisma.user.update({
-                data : {
-                    otp : randomOtp,
-                    otpExpiry : expTime
-                },
-                where : {
-                    id : idOfUser
+        if(userDataWithOtpField && !userDataWithOtpField.user.isEmailVerified){
+            try {
+                var randomOtp = '';
+                for(var i = 0 ; i < 6 ; i++){
+                    randomOtp += Math.floor(Math.random()*10);
                 }
-            })
-            const result = await sendMail({email : update.email,otp : randomOtp})
-            if(result.accepted){
-                return{
-                    success : true,
-                    message : "OTP send to email",
+                const expTime = Date.now() + 5*60*1000 + '';
+                await prisma.emailOtpVerification.update({
+                    where : {
+                        token : otpToken
+                    },
+                    data : {
+                        otp : randomOtp,
+                        otpExpiry : expTime,
+                    }
+                })
+                try {
+                    const result = await sendMail({email : userDataWithOtpField.user.email,otp : randomOtp})
+                if(result.accepted){
+                    return{
+                        success : true,
+                        message : "OTP send to email",
+                    }
+                }else{
+                    return{
+                        success : false,
+                        message : "Something went wrong",
+                    }
                 }
-            }else{
-                return{
+                } catch (error) {
+                    return {
+                        success : false,
+                        message : "Try sending again !"
+                    }
+                }
+            } catch (error) {
+                return {
                     success : false,
-                    message : "Something went wrong",
+                    message : "Try sending again !"
                 }
             }
         }
@@ -62,45 +83,68 @@ export async function resendOTPForEmailVerification({userIdToken} : {userIdToken
 
 
 
-export async function resendOTPForPassChange({userId} : {userId : string}){
-    const idOfUser = jwt.verify(userId, process.env.JWT_SECRET || '') as string;
+export async function resendOTPForPassChange({otpToken} : {otpToken : string}){
     try {
-        const existUser = await prisma.user.findFirst({
+        const userDataWithOtpField = await prisma.emailOtpVerification.findFirst({
             where : {
-                id : idOfUser
+                token : otpToken
+            },
+            include : {
+                user : {
+                    select : {
+                        email : true,
+                        isEmailVerified : true
+                    }
+                }
             }
         })
-        if(existUser && !existUser.isEmailVerified){
+        if(userDataWithOtpField && !userDataWithOtpField.user.isEmailVerified){
             return{
                 success : false,
                 message : "Email not verified"
             }
         }
-        if(existUser && existUser.isEmailVerified){
-            var randomOtp = '';
-            for(var i = 0 ; i < 6 ; i++){
-                randomOtp += Math.floor(Math.random()*10);
-            }
-            const expTime = Date.now() + 5*60*1000 + '';
-            const update = await prisma.user.update({
-                data : {
-                    otp : randomOtp,
-                    otpExpiry : expTime
-                },
-                where : {
-                    id : idOfUser
+        if(userDataWithOtpField && userDataWithOtpField.user.isEmailVerified){
+            try {
+                var randomOtp = '';
+                for(var i = 0 ; i < 6 ; i++){
+                    randomOtp += Math.floor(Math.random()*10);
                 }
-            })
-            const result = await sendMail({email : update.email,otp : randomOtp})
-            if(result.accepted){
-                return{
-                    success : true,
-                    message : "OTP send to email",
+                const expTime = Date.now() + 5*60*1000 + '';
+                await prisma.emailOtpVerification.update({
+                    where : {
+                        token : otpToken
+                    },
+                    data : {
+                        otp : randomOtp,
+                        otpExpiry : expTime,
+                    }
+                })
+                try {
+                    const result = await sendMail({email : userDataWithOtpField.user.email,otp : randomOtp})
+                    if(result.accepted){
+                        return{
+                            success : true,
+                            message : "OTP send to email",
+                        }
+                    }else{
+                        return{
+                            success : false,
+                            message : "Something went wrong",
+                        }
+                    }
+                } catch (error) {
+                    
+                    return {
+                        success : false,
+                        message : "Try sending again !"
+                    }
                 }
-            }else{
-                return{
+            } catch (error) {
+                console.log(error)
+                return {
                     success : false,
-                    message : "Something went wrong",
+                    message : "Try sending again !"
                 }
             }
         }

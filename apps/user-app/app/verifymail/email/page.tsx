@@ -11,7 +11,7 @@ import { ShootMail } from "../../action/shootmail";
 type BackendResponse = {
     success : boolean | null,
     message : string,
-    userIdToken : null | string
+    otpToken : null | string
 }
 
 
@@ -21,7 +21,7 @@ export default function EmailForEmailVerification(){
     const[response,setResponse] = useState<BackendResponse>({
         message : '',
         success : null,
-        userIdToken : null
+        otpToken : null
     });
     const {register,handleSubmit,formState : {errors},resetField} = useForm<emailFormat>({resolver : zodResolver(emailSchema)});
     async function shootMailToEmail(data : emailFormat){
@@ -59,7 +59,7 @@ export default function EmailForEmailVerification(){
                     <div>
                     </div>
                     <div className={`text-gray-600 hover:text-blue-600 font-medium hover:cursor-pointer mb-2 text-sm ${response.success?"":"hidden"}`}
-                    onClick={() => {router.push(`/verifymail/verifyotp/${response.userIdToken}`)} }>
+                    onClick={() => {router.push(`/verifymail/verifyotp/${response.otpToken}`)} }>
                         verify otp
                     </div>
                 </div>

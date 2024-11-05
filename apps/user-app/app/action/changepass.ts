@@ -7,20 +7,28 @@ import bcrypt from "bcrypt"
 type ChangePassType = {
     password : string,
     confirmPass : string,
-    userIdToken : string
+    otpToken : string
 }
 
-export async function ChangePassword({password,confirmPass,userIdToken}: ChangePassType){
-    const  userId  = jwt.verify(userIdToken,process.env.JWT_SECRET || "") as string;
+export async function ChangePassword({password,confirmPass,otpToken}: ChangePassType){
     const format = changePassSchema.safeParse({password,confirmPass});
     if(format.success){
-        const user = await prisma.user.findFirst({
+        const userWithOtpDetails = await prisma.emailOtpVerification.findFirst({
             where : {
-                id : userId
+                token : otpToken
+            },
+            include : {
+                user : true
             }
         })
-        if(user){
-            const oldNewEqual = await bcrypt.compare(password,user.password);
+        if(userWithOtpDetails){
+            if(!userWithOtpDetails.isVerified){
+                return {
+                    success : false,
+                    message : "Invalid token error!"
+                }
+            }
+            const oldNewEqual = await bcrypt.compare(password,userWithOtpDetails.user.password);
             if(oldNewEqual){
                 return{
                     success : false,
@@ -34,14 +42,12 @@ export async function ChangePassword({password,confirmPass,userIdToken}: ChangeP
                             password : newPass
                         },
                         where : {
-                            id : userId
+                            id : userWithOtpDetails.userId
                         }
                     })
-                    if(update){
-                        return{
-                            success : true,
-                            message : "Password changed Successfully"
-                        }
+                    return{
+                        success : true,
+                        message : "Password changed Successfully"
                     }
                 } catch (error) {
                     return{
@@ -50,10 +56,10 @@ export async function ChangePassword({password,confirmPass,userIdToken}: ChangeP
                     }
                 }
             }
+        }else{
             return {
                 success : false,
                 message : "Invalid token error!"
-
             }
         }
     }else{

@@ -6,5 +6,5 @@ export const loginEmailAtom = atom({
 })
 export const counterAtom = atom({
     key : "counter",
-    default : 120
+    default : 10
 })

@@ -24,7 +24,7 @@ export default function ChnagePassword({params }: any){
     const {register,handleSubmit,formState : {errors},resetField} = useForm<changePassFormat>({resolver : zodResolver(changePassSchema)});
     async function forgotPassword(data : changePassFormat){
         setLoading(true)
-        const res = await ChangePassword({password : data.password,confirmPass : data.confirmPass,userIdToken : params.id}) as BackendResponse;
+        const res = await ChangePassword({password : data.password,confirmPass : data.confirmPass,otpToken : params.id}) as BackendResponse;
         setLoading(false);
         setResponse(res);
     }

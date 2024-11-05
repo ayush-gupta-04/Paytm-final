@@ -5,6 +5,7 @@ import { signupSchema } from "@repo/schema/zod";
 import bcrypt from "bcrypt";
 import { sendMail } from "../../lib/mail";
 import jwt from "jsonwebtoken";
+import crypto from "crypto"
 
 export async function CreateNewAccount(user : SignupFormat){
     const success = signupSchema.safeParse(user);
@@ -29,9 +30,10 @@ export async function CreateNewAccount(user : SignupFormat){
             for(var i = 0 ; i < 6 ; i++){
                 randomOtp += Math.floor(Math.random()*10);
             }
-            const currTime = Date.now() + 5*60*1000 + '';
+            const otpExpiryTime = Date.now() + 5*60*1000 + '';
+            const otpToken = crypto.randomUUID();
             try {
-                const userWithBalance = await prisma.$transaction(async (tnx) => {
+                const otpTable = await prisma.$transaction(async (tnx) => {
                     const newUser = await tnx.user.create({
                         data : {
                             firstname : user.firstname,
@@ -39,10 +41,9 @@ export async function CreateNewAccount(user : SignupFormat){
                             email : user.email,
                             password : hashedPass,
                             phone : user.phone,
-                            otp : randomOtp,
-                            otpExpiry : currTime
                         }
                     })
+                    
                     await tnx.balance.create({
                         data : {
                             amount : 0,
@@ -50,17 +51,27 @@ export async function CreateNewAccount(user : SignupFormat){
                             userId : newUser.id
                         }
                     })
-                    return newUser
+                    console.log("hello")
+                    const otpTable = await tnx.emailOtpVerification.create({
+                        data : {
+                            userId : newUser.id,
+                            otp : randomOtp,
+                            otpExpiry : otpExpiryTime,
+                            token : otpToken
+                        }
+                    })
+                    
+                    return otpTable 
                 })
+                console.log(otpTable)
         
-                const userIdToken = jwt.sign(userWithBalance.id,process.env.JWT_SECRET || '')
                 //send email
                 const result = await sendMail({email : user.email,otp : randomOtp})
                 if(result.accepted){
                     return{
                         success : true,
                         message : "OTP send to email",
-                        userIdToken : userIdToken
+                        otpToken : otpTable.token
                     }
                 }else{
                     return{
@@ -69,12 +80,14 @@ export async function CreateNewAccount(user : SignupFormat){
                     }
                 }
             } catch (error) {
+                console.log(error)
                 return{
                     success : false,
                     message : "Something went wrong!"
                 }
             }
         } catch (error) {
+            
             return{
                 success : false,
                 message : "Something went wrong!"

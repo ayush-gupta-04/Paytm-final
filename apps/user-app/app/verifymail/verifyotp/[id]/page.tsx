@@ -24,18 +24,18 @@ export default function EmailVerifyPage({params} : any){
     });
     const[count,setCount] = useRecoilState(counterAtom);
     useEffect(() => {
-        setCount(120)
+        setCount(10)
     },[])
     async function verifyOtp(data : otpFormat){
         setLoading(true);
-        const res = await verifyingEmailOtp({otp : data.otp, userIdToken : params.id}) as BackendResponse;
+        const res = await verifyingEmailOtp({otp : data.otp, otpToken : params.id}) as BackendResponse;
         setResponse(res);
         setLoading(false);
         resetField;
     }
     async function resend(){
         setLoading(true);
-        const res = await resendOTPForEmailVerification({userIdToken : params.id}) as BackendResponse
+        const res = await resendOTPForEmailVerification({otpToken : params.id}) as BackendResponse
         setResponse(res);
         setLoading(false);
         resetField;

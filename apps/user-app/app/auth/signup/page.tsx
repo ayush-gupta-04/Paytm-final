@@ -11,7 +11,7 @@ import { CreateNewAccount } from "../../action/signup";
 type BackendResponse = {
     success : boolean | null,
     message : string,
-    userIdToken : string | null
+    otpToken : string | null
 }
 
 
@@ -21,12 +21,13 @@ export default function SignupPage(){
     const[response,setResponse] = useState<BackendResponse>({
         message : '',
         success : null,
-        userIdToken : null
+        otpToken : null
     });
     const {register,handleSubmit,formState : { errors },resetField} = useForm<SignupFormat>({resolver : zodResolver(signupSchema)});
     async function signup(userdata : SignupFormat){
         setLoading(true);
         const res = await CreateNewAccount(userdata) as BackendResponse;
+        console.log(res)
         setResponse(res);
         setLoading(false);
         resetField;
@@ -127,7 +128,7 @@ export default function SignupPage(){
                     <div></div>
                     <button className={`text-gray-600 hover:text-blue-600 font-semibold hover:cursor-pointer ${response.success?"":"hidden"}`}
                     type="button"
-                    onClick={() => {router.push(`/verifymail/verifyotp/${response.userIdToken}`)}} >
+                    onClick={() => {router.push(`/verifymail/verifyotp/${response.otpToken}`)}} >
                         Verify OTP
                     </button>
                 </div>

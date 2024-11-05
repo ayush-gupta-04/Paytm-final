@@ -20,13 +20,22 @@ model User {
   email              String     @unique
   password           String
   phone              String     @unique
-  otpExpiry          String?
   isEmailVerified    Boolean    @default(false)
-  otp                String?
   balance            Balance[]
   onRampTransaction  OnRampTransaction[]
   sentTransfer       p2pTransfer[]     @relation(name: "FromUser")
   receivedTransfer       p2pTransfer[]     @relation(name: "toUser")
+  emailOtpVerification    emailOtpVerification[]
+}
+
+model emailOtpVerification{
+  id                  String    @id   @default(uuid())
+  userId              String
+  user                User      @relation(fields: [userId],references: [id])
+  token               String    @unique
+  otp                 String
+  otpExpiry           String
+  isVerified          Boolean    @default(false)
 }
 
 model p2pTransfer {

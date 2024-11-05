@@ -13,7 +13,6 @@ import { counterAtom } from "@paytm-repo/store/atom";
 type BackendResponse = {
     success : boolean | null,
     message : string,
-    userIdToken : String | null
 }
 export default function OtpVerifyForPassChange({params} : any){
     const router = useRouter();
@@ -22,21 +21,20 @@ export default function OtpVerifyForPassChange({params} : any){
     const[response,setResponse] = useState<BackendResponse>({
         message : '',
         success : null,
-        userIdToken : null
     });
     useEffect(() => {
-        setCount(120)
+        setCount(10)
     },[])
     async function verifyOtp(data : otpFormat){
         setLoading(true);
-        const res = await verifyingPassOtpForChangePass({otp : data.otp, userIdToken : params.id}) as BackendResponse;
+        const res = await verifyingPassOtpForChangePass({otp : data.otp, otpToken : params.id}) as BackendResponse;
         setResponse(res);
         setLoading(false);
         resetField;
     }
     async function resend(){
         setLoading(true);
-        const res = await resendOTPForPassChange({userId : params.id}) as BackendResponse
+        const res = await resendOTPForPassChange({otpToken : params.id}) as BackendResponse
         setResponse(res);
         setLoading(false);
         resetField;
@@ -83,8 +81,8 @@ export default function OtpVerifyForPassChange({params} : any){
             type="submit">
                 {loading?"Loading...":"Verify OTP"}
             </button>
-            <span className={`${response.success && response.userIdToken != null?"":"hidden"} font-semibold text-gray-700 hover:text-blue-600 hover:cursor-pointer hover:scale-x-105`}
-            onClick={() => {router.push(`/forgotpass/change/${response.userIdToken}`)}}>
+            <span className={`${response.success && params.id != null?"":"hidden"} font-semibold text-gray-700 hover:text-blue-600 hover:cursor-pointer hover:scale-x-105`}
+            onClick={() => {router.push(`/forgotpass/change/${params.id}`)}}>
                 Change Password
             </span>
             </form>

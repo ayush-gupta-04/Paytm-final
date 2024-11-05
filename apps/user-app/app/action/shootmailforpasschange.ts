@@ -21,23 +21,22 @@ export async function ShootMailForPassChange(data : {email : string}){
                         randomOtp += Math.floor(Math.random()*10);
                     }
                     const expTime = Date.now() + 5*60*1000 + '';
-                    await prisma.user.update({
+                    const otpToken = crypto.randomUUID();
+                    await prisma.emailOtpVerification.create({
                         data : {
+                            userId : user.id,
                             otp : randomOtp,
+                            token : otpToken,
                             otpExpiry : expTime
-                        },
-                        where : {
-                            id : user.id
                         }
                     })
-                    const token = jwt.sign(user.id,process.env.JWT_SECRET || '');
                     //send email
                     const result = await sendMail({email : user.email,otp : randomOtp})
                     if(result.accepted){
                         return{
                             success : true,
                             message : "OTP send to email",
-                            userIdToken : token
+                            otpToken : otpToken
                         }
                     }else{
                         return{
