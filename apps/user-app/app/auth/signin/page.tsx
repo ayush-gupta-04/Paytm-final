@@ -112,7 +112,9 @@ export default function SigninPage(){
                     {loading?"Loading...":"Login"}
                 </button>
             </form>
-            <div className="bg-gray-300 py-2 rounded-md flex justify-center gap-3 hover:bg-gray-400 hover:cursor-pointer">
+            <div className="bg-gray-300 py-2 rounded-md flex justify-center gap-3 hover:bg-gray-400 hover:cursor-pointer"
+            //the callback url will ensure to redirect after a successfull login from google
+            onClick={() => {signIn("google",{ callbackUrl: '/dashboard'})}}>
                 <img src="/google.svg" />
                 <label className="font-semibold">Signup With google</label>
             </div>

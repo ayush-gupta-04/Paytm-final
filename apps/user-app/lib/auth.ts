@@ -1,8 +1,10 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import  prisma from "@paytm-repo/db/client";
-// import GoogleProvider from 'next-auth/providers/google'
+import GoogleProvider from 'next-auth/providers/google'
 import bcrypt from "bcrypt"
-import { signOut } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
+import { signinSchema } from '@repo/schema/zod';
+import { chownSync } from 'fs';
 
 export const NEXT_AUTH = {
     providers : [
@@ -13,36 +15,44 @@ export const NEXT_AUTH = {
               password: { label: 'Password', type: 'password', placeholder: '' },
             },
             async authorize(credentials : any) {
-                const email = credentials.username as string;
-                const password = credentials.password as string;
-                try {
-                    const data = await prisma.user.findFirst({
-                        where : {
-                            email : email
-                        }
-                    })
-                    if(data && data.isEmailVerified){
-                        const passMatched = await bcrypt.compare(password,data.password)
-                        if(passMatched){
-                            return{
-                                id : data.id,
-                                name : data.firstname + " " + data.lastname,
-                                email : data.email,
-                                phone : data.phone
+                const format = signinSchema.safeParse({email : credentials.username,password : credentials.password});
+                if(format.success){
+                    const email = credentials.username as string;
+                    const password = credentials.password as string;
+                    try {
+                        const data = await prisma.user.findFirst({
+                            where : {
+                                email : email
+                            }
+                        })
+                        if(data && data.isEmailVerified && data.password){
+                            const passMatched = await bcrypt.compare(password,data.password)
+                            if(passMatched){
+                                return{
+                                    id : data.id,
+                                    name : data.firstname + " " + data.lastname,
+                                    email : data.email,
+                                    phone : data.phone
+                                }
+                            }else{
+                                return null
                             }
                         }else{
-                            return null
+                            return null;
                         }
-                    }else{
-                        return null;
+                    } catch (error) {
+                        return null
                     }
-                } catch (error) {
-                    return null
-                }
+                } 
+                return null;
+                
             },
         }),
+        GoogleProvider({
+            clientId : process.env.GOOGLE_CLIENT_ID || "",
+            clientSecret : process.env.GOOGLE_CLIENT_SECRET || ""
+        })
     ],
-    
     pages : {
         signIn : '/auth/signin',
         signOut : '/auth/signin'
@@ -50,8 +60,60 @@ export const NEXT_AUTH = {
     secret : process.env.NEXTAUTH_SECRET,
     callbacks : {
         session : ({session,token} : any) => {
+            console.log(session)
             session.user.id = token.sub;
             return session;
+        },
+        signIn : async ({user,account} : any) => {
+            console.log(user);
+            if(account.provider == "google"){
+                const existingUser = await prisma.user.findFirst({
+                    where : {
+                        email : user.email
+                    }
+                })
+                const name = user.name.split(" ");
+                let firstname = user.name;
+                let lastname = null;
+                if(name.length == 2){
+                    firstname = name[0];
+                    lastname = name[1];
+                }
+                if(!existingUser){
+                    try {
+                        const newUser = await prisma.$transaction(async (tnx) => {
+                            const newUser = await tnx.user.create({
+                                data : {
+                                    email : user.email,
+                                    firstname : firstname,
+                                    lastname : lastname,
+                                    isEmailVerified : true
+                                }
+                            })
+                            await tnx.balance.create({
+                                data : {
+                                    amount : 0,
+                                    locked : 0,
+                                    userId : newUser.id
+                                }
+                            })
+                            return newUser;
+                        })
+                        //this user will default have a google id.
+                        //we change this google id with our databse id...to inject in session object.
+                        user.id = newUser.id;
+                        return true;
+                    } catch (error) {
+                        return false;
+                    }
+                }else{
+                    //this user will default have a google id.
+                    //we change this google id with our databse id...to inject in session object.
+                    user.id = existingUser.id;
+                }
+                
+            }
+            return true;
         }
     }
 }

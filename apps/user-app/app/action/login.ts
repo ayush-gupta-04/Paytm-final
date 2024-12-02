@@ -3,8 +3,8 @@ import  prisma  from "@paytm-repo/db/client";
 import { signinSchema } from "@repo/schema/zod"
 
 export async function LoginUser(data : {email : string , password : string}){
-    const success = signinSchema.safeParse(data);
-    if(success){
+    const format = signinSchema.safeParse(data);
+    if(format.success){
         try {
             const user = await prisma.user.findFirst({
                 where : {

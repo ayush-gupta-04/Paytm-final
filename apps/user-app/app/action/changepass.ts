@@ -21,7 +21,7 @@ export async function ChangePassword({password,confirmPass,otpToken}: ChangePass
                 user : true
             }
         })
-        if(userWithOtpDetails){
+        if(userWithOtpDetails && userWithOtpDetails.user.password){
             if(!userWithOtpDetails.isVerified){
                 return {
                     success : false,

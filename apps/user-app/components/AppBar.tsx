@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function AppBarClient(){
     const session = useSession();
-    const router = useRouter()
+    const router = useRouter();
     return(
         <div>
             <AppBar 

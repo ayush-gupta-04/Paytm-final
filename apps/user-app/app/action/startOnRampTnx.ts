@@ -14,8 +14,9 @@ type PaymentInfo = {
 
 export async function startOnRampTnx(data : PaymentInfo){
     const amount = Number(data.amount)*100;
-    const session = await getServerSession(NEXT_AUTH)
+    const session = await getServerSession(NEXT_AUTH);
     const success = addMoneySchema.safeParse({amount : data.amount,bankName  : data.bankName});
+    console.log(session)
     if(session){
         if(success){
             try {
@@ -43,6 +44,7 @@ export async function startOnRampTnx(data : PaymentInfo){
                             bankUrl : data.bankUrl
                         }
                     } catch (error) {
+                        console.log(error)
                         return{
                             success : false,
                             message : "Something went Down!"

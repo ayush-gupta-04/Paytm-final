@@ -43,10 +43,10 @@ export async function payNowViaHdfc(data : PaymentType){
                     //but for the sake of convinience we took the user table.
                     const validUser = await prisma.user.findFirst({
                         where : {
-                            id : userId
+                            email : data.email
                         }
                     })
-                    if(validUser){
+                    if(validUser && validUser.password){
                         const passMatch = await bcrypt.compare(data.password,validUser?.password)
                         if(!passMatch){
                             return{
@@ -84,6 +84,7 @@ export async function payNowViaHdfc(data : PaymentType){
                 }
             }
         } catch (error) {
+            console.log(error)
             return{
                 success : false,
                 message : "HDFC server is down!"

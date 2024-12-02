@@ -8,8 +8,8 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto"
 
 export async function CreateNewAccount(user : SignupFormat){
-    const success = signupSchema.safeParse(user);
-    if(success){
+    const format = signupSchema.safeParse(user);
+    if(format.success){
         try {
             const userExist = await prisma.user.findFirst({
                 where : {
@@ -51,7 +51,6 @@ export async function CreateNewAccount(user : SignupFormat){
                             userId : newUser.id
                         }
                     })
-                    console.log("hello")
                     const otpTable = await tnx.emailOtpVerification.create({
                         data : {
                             userId : newUser.id,
@@ -63,7 +62,6 @@ export async function CreateNewAccount(user : SignupFormat){
                     
                     return otpTable 
                 })
-                console.log(otpTable)
         
                 //send email
                 const result = await sendMail({email : user.email,otp : randomOtp})
@@ -80,7 +78,6 @@ export async function CreateNewAccount(user : SignupFormat){
                     }
                 }
             } catch (error) {
-                console.log(error)
                 return{
                     success : false,
                     message : "Something went wrong!"

@@ -18,7 +18,7 @@ export async  function p2pTransfer(data : p2pFormat){
                     id : session.user.id
                 }
             })
-            if(FromUser){
+            if(FromUser && FromUser.password){
                 const passMatched = await bcrypt.compare(data.password,FromUser.password)
                 if(passMatched){
                     //toUser cannot be the same user who is sending money ---> done
