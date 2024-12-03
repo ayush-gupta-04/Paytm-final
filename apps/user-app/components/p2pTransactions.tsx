@@ -5,7 +5,7 @@ type onRampTransactionsType = {
     time : string,
     amount : number,
     name : string,
-    phone : string
+    phone : string | null
 }
 
 export default function P2PTransactions({p2pTnx} : {p2pTnx : onRampTransactionsType[]}){

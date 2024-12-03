@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**","dist/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -13,6 +13,10 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "pipeline": {
+      "env": ["GOOGLE_CLIENT_ID","GOOGLE_CLIENT_SECRET","NEXTAUTH_SECRET","SMTP_USER_ID","SMTP_USER_PASSWORD"]
     }
   }
+  
 }

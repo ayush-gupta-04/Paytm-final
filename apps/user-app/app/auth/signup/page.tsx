@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CreateNewAccount } from "../../action/signup";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 
 type BackendResponse = {
     success : boolean | null,
@@ -145,7 +146,7 @@ export default function SignupPage(){
             <div className="bg-gray-200 py-2 rounded-md flex justify-center gap-3 hover:bg-gray-300 hover:cursor-pointer"
             //the callback url will ensure to redirect after a successfull login from google
             onClick={() => {signIn("google",{ callbackUrl: '/dashboard'})}}>
-                <img src="/google.svg"/>
+                <Image src={"/google.svg"} alt = {""}/>
                 <label className="font-semibold">Signup With google</label>
             </div>
             <div className="flex gap-2 self-center text-gray-500 mt-4">

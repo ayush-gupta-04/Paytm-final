@@ -1,6 +1,5 @@
 'use server'
 import  prisma  from "@paytm-repo/db/client";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { sendMail } from "../../lib/mail";
 
 export async function resendOTPForEmailVerification({otpToken} : {otpToken : string}){

@@ -7,7 +7,6 @@ import { startOnRampTnx } from "../app/action/startOnRampTnx";
 import { useState } from "react";
 import Success from "@repo/ui/success";
 import Error from "@repo/ui/error";
-import { useRouter } from "next/navigation";
 
 const SUPPORTED_BANKS = [
     {
@@ -40,7 +39,6 @@ type BackendResponse = {
 }
 
 export function AddMoney(){
-    const router = useRouter();
     const options = SUPPORTED_BANKS.map(x => ({
         key: x.name,
         value: x.name
@@ -52,7 +50,7 @@ export function AddMoney(){
         bankUrl : ""
     });
     const[loading,setLoading] = useState(false)
-    const {register,handleSubmit,formState : { errors },resetField} = useForm<addMoneyFormat>({resolver : zodResolver(addMoneySchema)});
+    const {register,handleSubmit,formState : { errors }} = useForm<addMoneyFormat>({resolver : zodResolver(addMoneySchema)});
     async function addMoney(data : addMoneyFormat){
         const bankData = SUPPORTED_BANKS.find((bank) => {
             if(bank.name == data.bankName){
@@ -70,7 +68,7 @@ export function AddMoney(){
         }
     }
     if(response.success){
-        window.open(`${response.bankUrl}?token=${response.tnxToken}`,"_blank")
+        window.open(`${response.bankUrl}/${response.tnxToken}`,"_blank")
         //set response we needed here...because
         //in first request success become true. and it was redircted correctly.
         //in next request when the control was struck on getting response...

@@ -16,13 +16,12 @@ export default function TransferPage(){
         success : null,
         message : ""
     })
-    const{register,handleSubmit,resetField,formState : {errors}} = useForm<p2pFormat>({resolver : zodResolver(p2pSchema)});
+    const{register,handleSubmit,formState : {errors}} = useForm<p2pFormat>({resolver : zodResolver(p2pSchema)});
     async function sendMoneyP2P(data : p2pFormat){
         setLoading(true);
         const res = await p2pTransfer(data) as BackendResponse;
         setLoading(false);
         setResponse(res);
-        resetField;
     }
     return(
         <div className="flex justify-center flex-row w-full items-center">

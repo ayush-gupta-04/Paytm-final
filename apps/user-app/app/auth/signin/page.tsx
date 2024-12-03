@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { LoginUser } from "../../action/login";
+import Image from "next/image";
 type BackendResponse = {
     success : boolean | null,
     message : string,
@@ -21,7 +22,7 @@ export default function SigninPage(){
         message : '',
         success : null,
     });
-    const {register,handleSubmit,formState : {errors},resetField} = useForm<SigninFormat>({resolver : zodResolver(signinSchema)});
+    const {register,handleSubmit,formState : {errors}} = useForm<SigninFormat>({resolver : zodResolver(signinSchema)});
     async function signinUser(data : SigninFormat){
         setLoading(true)
         const res = await LoginUser(data) as BackendResponse;
@@ -115,7 +116,7 @@ export default function SigninPage(){
             <div className="bg-gray-300 py-2 rounded-md flex justify-center gap-3 hover:bg-gray-400 hover:cursor-pointer"
             //the callback url will ensure to redirect after a successfull login from google
             onClick={() => {signIn("google",{ callbackUrl: '/dashboard'})}}>
-                <img src="/google.svg" />
+                <Image src={"/google.svg"} alt = {""} />
                 <label className="font-semibold">Signup With google</label>
             </div>
             <div className="flex gap-2 self-center text-gray-500 mt-4">

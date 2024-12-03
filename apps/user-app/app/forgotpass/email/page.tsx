@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ShootMailForPassChange } from "../../action/shootmailforpasschange";
+import Image from "next/image";
 
 type BackendResponse = {
     success : boolean | null,
@@ -34,7 +35,7 @@ export default function EmailForEmailVerification(){
     return (
         <div className="w-1/3 bg-white px-8 py-8 text-center flex flex-col gap-3 rounded-lg">
             <div className="flex  flex-row justify-between">
-                <img src="/back.svg" className="size-6 cursor-pointer self-center" onClick={() => {router.back()}}/>
+                <Image src={"/back.svg"} alt = {""} className="size-6 cursor-pointer self-center" onClick={() => {router.back()}}/>
             <header className="text-4xl  font-serif font-bold text-slate-800 mb-4  mt-2">
                 Enter Email
             </header>

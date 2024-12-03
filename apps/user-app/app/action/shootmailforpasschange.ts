@@ -2,7 +2,6 @@
 import  prisma  from "@paytm-repo/db/client";
 import { emailSchema } from "@repo/schema/zod";
 import { sendMail } from "../../lib/mail";
-import jwt from "jsonwebtoken"
 
 
 export async function ShootMailForPassChange(data : {email : string}){

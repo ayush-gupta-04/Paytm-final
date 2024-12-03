@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ChangePassword } from "../../../action/changepass";
+import Image from "next/image";
 
 type BackendResponse = {
     success : boolean | null,
@@ -21,7 +22,7 @@ export default function ChnagePassword({params }: any){
         message : '',
         success : null,
     });
-    const {register,handleSubmit,formState : {errors},resetField} = useForm<changePassFormat>({resolver : zodResolver(changePassSchema)});
+    const {register,handleSubmit,formState : {errors}} = useForm<changePassFormat>({resolver : zodResolver(changePassSchema)});
     async function forgotPassword(data : changePassFormat){
         setLoading(true)
         const res = await ChangePassword({password : data.password,confirmPass : data.confirmPass,otpToken : params.id}) as BackendResponse;
@@ -36,7 +37,7 @@ export default function ChnagePassword({params }: any){
     return (
         <div className="w-1/3 bg-white px-8 py-8 text-center flex flex-col gap-3 rounded-lg">
             <div className="flex  flex-row justify-between">
-                <img src="/back.svg" className="size-6 cursor-pointer self-center" onClick={() => {router.back()}}/>
+                <Image src={"/back.svg"} alt = {""} className="size-6 cursor-pointer self-center" onClick={() => {router.back()}}/>
             <header className="text-4xl  font-serif font-bold text-slate-800 mb-4  mt-2">
                 Enter new Password
             </header>

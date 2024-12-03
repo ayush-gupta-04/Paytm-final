@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SigninFormat, signinSchema } from "@repo/schema/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
-import { useSearchParams } from "next/navigation"
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -12,15 +11,15 @@ type BackendResponse ={
     message : string,
     success : boolean | null
 }
-export default function HdfcTransactionPage(){
-    const search = useSearchParams();
+export default function HdfcTransactionPage({params} : {params : {token : string | null}}){ 
     const[loading,setLoading] = useState(false);
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : ""
     })
-    const token = search.get("token");
-    const {register,handleSubmit,formState : {errors},resetField} = useForm<SigninFormat>({resolver : zodResolver(signinSchema)});
+    const token = params.token || "";
+    console.log(token)
+    const {register,handleSubmit,formState : {errors}} = useForm<SigninFormat>({resolver : zodResolver(signinSchema)});
     async function payNow(data : SigninFormat){
         setLoading(true);
         const res = await payNowViaHdfc({...data,token : token}) as BackendResponse;
@@ -61,7 +60,7 @@ export default function HdfcTransactionPage(){
                         <Success message={response.message} success = {response.success}></Success>
                         <Error message={response.message} success = {response.success}></Error>
                     </div>
-                    <button className="w-full bg-gray-800 text-white rounded-md p-2.5 hover:bg-gray-700 text-lg">Pay Now</button>
+                    <button className="w-full bg-gray-800 text-white rounded-md p-2.5 hover:bg-gray-700 text-lg">{loading?"Loading...":"Pay Now"}</button>
                 </form>
             </div>
         </div>

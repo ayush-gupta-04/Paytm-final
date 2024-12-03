@@ -1,7 +1,5 @@
 'use server'
 import  prisma  from "@paytm-repo/db/client";
-import { otpSchema } from "@repo/schema/zod";
-import jwt, { JwtPayload } from "jsonwebtoken"
 
 export async function verifyingEmailOtp(data : { otp : string, otpToken : string }){
     try {

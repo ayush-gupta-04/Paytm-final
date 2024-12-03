@@ -8,8 +8,9 @@ import Success from "@repo/ui/success";
 import Error from "@repo/ui/error";
 import { resendOTPForPassChange } from "../../../action/resend";
 import { verifyingPassOtpForChangePass } from "../../../action/verify";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState} from "recoil";
 import { counterAtom } from "@paytm-repo/store/atom";
+import Image from "next/image";
 type BackendResponse = {
     success : boolean | null,
     message : string,
@@ -43,7 +44,7 @@ export default function OtpVerifyForPassChange({params} : any){
     return(
         <div className="w-1/3 bg-white px-8 py-8 text-center flex flex-col gap-4 rounded-lg">
             <div className="flex  flex-row justify-between">
-                <img src="/back.svg" className="size-6 cursor-pointer self-center" onClick={() => {router.back()}}/>
+                <Image src={"/back.svg"} alt = {""} className="size-6 cursor-pointer self-center" onClick={() => {router.back()}}/>
             <header className="text-4xl  font-serif font-bold text-slate-800 mb-4  mt-2">
                 Enter OTP
             </header>

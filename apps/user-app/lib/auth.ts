@@ -2,9 +2,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import  prisma from "@paytm-repo/db/client";
 import GoogleProvider from 'next-auth/providers/google'
 import bcrypt from "bcrypt"
-import { signIn, signOut } from 'next-auth/react';
 import { signinSchema } from '@repo/schema/zod';
-import { chownSync } from 'fs';
 
 export const NEXT_AUTH = {
     providers : [

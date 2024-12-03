@@ -1,6 +1,5 @@
 'use server'
 import { changePassSchema } from "@repo/schema/zod";
-import jwt, { JwtPayload } from "jsonwebtoken"
 import prisma from "@paytm-repo/db/client"
 import bcrypt from "bcrypt"
 
@@ -37,7 +36,7 @@ export async function ChangePassword({password,confirmPass,otpToken}: ChangePass
             }else{
                 try {
                     const newPass = await bcrypt.hash(password,10);
-                    const update = await prisma.user.update({
+                    await prisma.user.update({
                         data : {
                             password : newPass
                         },
