@@ -138,7 +138,7 @@ export default function SignupPage(){
                     <Success message={response.message} success = {response.success}></Success>
                     <Error message={response.message} success = {response.success}></Error>
                 </div>
-                <button className={`rounded-md text-white w-full py-3 ${loading?"bg-gray-500":"bg-gray-900 hover:bg-gray-700"}`}
+                <button className={`rounded-md text-white w-full py-3 ${loading?"bg-[#4E8FFF]":"bg-[#0560FD] hover:bg-[#0045BD]"}`}
                 disabled = {loading}>
                         {loading?"Loading...":"Creat new Account"}
                 </button>
@@ -146,7 +146,7 @@ export default function SignupPage(){
             <div className="bg-gray-200 py-2 rounded-md flex justify-center gap-3 hover:bg-gray-300 hover:cursor-pointer"
             //the callback url will ensure to redirect after a successfull login from google
             onClick={() => {signIn("google",{ callbackUrl: '/dashboard'})}}>
-                <Image src={"/google.svg"} alt = {""}/>
+                <Image src={"/google.svg"} alt = {""} className="size-7" height={0} width={0}/>
                 <label className="font-semibold">Signup With google</label>
             </div>
             <div className="flex gap-2 self-center text-gray-500 mt-4">

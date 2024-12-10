@@ -9,7 +9,7 @@ export function SidebarItem ({ href, title, icon }: { href: string; title: strin
     const selected = (pathname === href)
     console.log(pathname)
     return (
-        <div className={`flex flex-row gap-2 cursor-pointer ${selected?"text-[#2e89ff]":"text-slate-600"}`} 
+        <div className={`flex flex-row gap-2 px-3 py-2 rounded-lg w-full cursor-pointer ${selected?"text-white bg-[#0560FD]":"text-[#404040]"}`} 
         onClick={() => {router.push(href)}}>
             <div className="self-center">
                 {icon}

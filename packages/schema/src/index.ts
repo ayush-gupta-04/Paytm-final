@@ -78,6 +78,17 @@ export const p2pSchema = zod.object({
     },{message : "Phone number should only contain numbers."}),
     password : zod.string().min(8,{message : "Password should be min of 8 characters"})
 })
+
+export const AddUpiSchema = zod.object({
+    upi : zod.string().max(20,{message : "UPI id cannot be more than 20"}).refine((data) => {
+        let regex = /^[a-zA-Z0-9]+[@]paytm$/;
+        if(data.match(regex)){
+            return true;
+        }
+        return false
+    },{message : "upi should end with @paytm",})
+})
+
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
@@ -85,3 +96,4 @@ export type emailFormat = zod.infer<typeof emailSchema>;
 export type changePassFormat = zod.infer<typeof changePassSchema>;
 export type addMoneyFormat = zod.infer<typeof addMoneySchema>;
 export type p2pFormat = zod.infer<typeof p2pSchema>;
+export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;

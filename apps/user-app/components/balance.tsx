@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth"
 import { NEXT_AUTH } from "../lib/auth"
 import prisma from "@paytm-repo/db/client";
+import { balanceAtom } from "@paytm-repo/store/atom";
+import { useRecoilState } from "recoil";
 
 async function getBalance(){
     const session = await getServerSession(NEXT_AUTH);
@@ -17,28 +19,48 @@ async function getBalance(){
 }
 
 export async function Balance(){
-    
     const balanceData = await getBalance();
-
     return(
-        <div className="w-full px-4 py-6 flex flex-col bg-gray-100 rounded-lg">
-            <div className="h-12 flex items-center border-b border-slate-300">
-                <header className="text-xl font-semibold text-gray-800">
-                    Balance
-                </header>
-            </div>
-            <div className="flex flex-row justify-between h-12 items-center font-semibold text-gray-700 border-b border-slate-300">
-                <div>Unlocked Balance</div>
-                <div>INR {balanceData.amount/100}</div>
-            </div>
-            <div className="flex flex-row justify-between h-12 items-center font-semibold text-gray-700 border-b border-slate-300">
-                <div>Total Locked Balance</div>
-                <div>INR {balanceData.locked/100}</div>
-            </div>
-            <div className="flex flex-row justify-between h-12 items-center font-semibold text-gray-700">
-                <div>Total Balance</div>
-                <div>INR {balanceData.locked/100 + balanceData.amount/100}</div>
+        <div>
+            <span className="bg-[#005EFF] px-3 py-2 rounded-lg text-white">
+                Wallet Balance
+            </span>
+            <div className="w-full h-56 bg-white shadow-md grid grid-cols-3 mt-4 rounded-lg py-6">
+                <div className="border-0 border-r-2 px-4">
+                    <div className="font-medium text-md">
+                        Total Balance
+                    </div>
+                    <div className="flex flex-row justify-center items-center h-full">
+                        <div className="flex felx-row gap-2">
+                            <div className="text-6xl">{balanceData.amount/100}</div>
+                            <div className="self-end">INR</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="border-0 border-r-2 px-4">
+                    <div className="font-medium text-md">
+                        Locked Balance
+                    </div>
+                    <div className="flex flex-row justify-center items-center h-full">
+                        <div className="flex felx-row gap-2">
+                            <div className="text-6xl">{balanceData.locked/100}</div>
+                            <div className="self-end">INR</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="px-4">
+                    <div className="font-medium text-md">
+                        Unlocked Balance
+                    </div>
+                    <div className="flex flex-row justify-center items-center h-full">
+                        <div className="flex felx-row gap-2">
+                            <div className="text-6xl">{balanceData.amount/100 - balanceData.locked/100}</div>
+                            <div className="self-end">INR</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
 }
+

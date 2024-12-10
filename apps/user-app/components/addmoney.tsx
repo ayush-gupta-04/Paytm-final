@@ -81,43 +81,58 @@ export function AddMoney(){
         })
     }
     return(
-        <div className="w-full min-h-52 bg-gray-100 rounded-md px-4 py-6">
-            <div className="h-12 flex border-b border-gray-300 mb-4">
-                <header className="text-xl font-semibold text-gray-700 self-center">
+        <div className="flex flex-col gap-3">
+        <span className="bg-[#005EFF] px-3 py-2 w-fit rounded-lg text-white">Add Money to wallet</span>
+        <div className="grid grid-cols-2 gap-2">
+            <div className="py-4 px-4 bg-white shadow-md rounded-lg h-fit">
+                <header className="text-2xl font-semibold text-gray-800 self-center pb-3 border-b-2 mb-3">
                     Add Money
                 </header>
+                <div className="w-full h-full">
+                        <form className="flex flex-col gap-6" onSubmit={handleSubmit(addMoney)}>
+                        <div className="flex flex-col gap-1">
+                            <div className="font-semibold">
+                                Amount
+                            </div>
+                            <input {...register("amount")} type="number" className="px-3 py-3 border border-slate-400 rounded-md" placeholder="Amount"/>
+                            {errors.amount && (
+                                    <div className="text-red-600">
+                                        {errors.amount.message}
+                                    </div>
+                            )} 
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <div className="font-semibold">
+                                Bank
+                            </div>
+                            <select {...register("bankName")}  className="hover:bg-slate-50 border border-slate-400 text-gray-900 text-sm rounded-lg block w-full p-4 font-semibold">
+                                {options.map((option) => <option key={option.key} value={option.key} className="font-semibold">{option.value}</option>)}
+                            </select>
+                            {errors.bankName && (
+                                    <div className="text-red-600">
+                                        {errors.bankName.message}
+                                    </div>
+                            )} 
+                        </div>
+                        <Success success = {response.success} message={response.message}></Success>
+                        <Error success = {response.success} message={response.message}></Error>
+                        <button className={`rounded-md text-white w-full bg-gray-800 hover:bg-gray-600 active:bg-gray-900 py-3 self-end`}>
+                            {loading?"Loading...":"Add Money"}
+                        </button>
+                    </form>
+                </div>
             </div>
-            <form className="flex flex-col gap-6" onSubmit={handleSubmit(addMoney)}>
-                <div className="flex flex-col gap-2">
-                    <div className="font-semibold">
-                        Amount
-                    </div>
-                    <input {...register("amount")} type="number" className="px-3 py-3 border border-slate-400 rounded-md" placeholder="Amount"/>
-                    {errors.amount && (
-                            <div className="text-red-600">
-                                {errors.amount.message}
-                            </div>
-                    )} 
-                </div>
-                <div className="flex flex-col gap-3">
-                    <div className="font-semibold">
-                        Bank
-                    </div>
-                    <select {...register("bankName")}  className="hover:bg-slate-50 border border-slate-400 text-gray-900 text-sm rounded-lg block w-full p-4 font-semibold">
-                        {options.map((option) => <option key={option.key} value={option.key} className="font-semibold">{option.value}</option>)}
-                    </select>
-                    {errors.bankName && (
-                            <div className="text-red-600">
-                                {errors.bankName.message}
-                            </div>
-                    )} 
-                </div>
-                <Success success = {response.success} message={response.message}></Success>
-                <Error success = {response.success} message={response.message}></Error>
-                <button className={`rounded-md text-white w-full bg-gray-800 hover:bg-gray-600 active:bg-gray-900 py-3`}>
-                    {loading?"Loading...":"Add Money"}
-                </button>
-            </form>
+            <div className="rounded-md mx-12">
+                <img src="paytm1.svg" alt="" className="rounded-r-md size-full" /> 
+            </div>
         </div>
+        </div>
+    )
+}
+
+function hello(){
+    return(
+        <></>
+        
     )
 }

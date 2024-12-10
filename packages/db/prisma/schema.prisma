@@ -21,6 +21,7 @@ model User {
   password           String?
   phone              String?     @unique
   isEmailVerified    Boolean    @default(false)
+  upi                String?     @unique
   balance            Balance[]
   onRampTransaction  OnRampTransaction[]
   sentTransfer       p2pTransfer[]     @relation(name: "FromUser")
