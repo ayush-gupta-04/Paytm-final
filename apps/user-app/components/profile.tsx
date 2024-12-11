@@ -1,6 +1,5 @@
-import { profile } from "console"
 
-export default function ProfileCard(){
+export default function ProfileCard({email,phone} : {email : string | null,phone : string | null}){
     return(
         <div className="col-span-2  mr-3 grid grid-rows-3 bg-white shadow-lg rounded-lg">
             <div className="row-span-2 flex flex-row justify-between"> 
@@ -13,11 +12,11 @@ export default function ProfileCard(){
             <div className="bg-[#a3a3a34f] w-full flex flex-col px-4 justify-evenly rounded-b-lg">
                 <div className=" flex justify-between">
                     <div className="text-[#757575] font-medium">Email</div>
-                    <div className="font-medium">ayush@gmail.com</div>
+                    <div className="font-medium">{email?`${email}`:"--"}</div>
                 </div>
                 <div className=" flex justify-between">
                     <div className="text-[#757575] font-medium">Phone</div>
-                    <div className="font-medium">+91 7970566566</div>
+                    <div className="font-medium">{phone?`+91 ${phone}`:"--"}</div>
                 </div>
             </div>
         </div>

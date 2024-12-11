@@ -1,25 +1,11 @@
 import { getServerSession } from "next-auth"
 import { NEXT_AUTH } from "../lib/auth"
 import prisma from "@paytm-repo/db/client";
-import { balanceAtom } from "@paytm-repo/store/atom";
-import { useRecoilState } from "recoil";
 
-async function getBalance(){
-    const session = await getServerSession(NEXT_AUTH);
-    console.log(session)
-    const balance = await prisma.balance.findFirst({
-        where: {
-            userId: (session?.user?.id)
-        }
-    });
-    return {
-        amount: balance?.amount || 0,
-        locked: balance?.locked || 0
-    }
-}
 
-export async function Balance(){
-    const balanceData = await getBalance();
+
+export async function Balance({amount,locked} : {amount : number,locked : number}){
+    
     return(
         <div>
             <span className="bg-[#005EFF] px-3 py-2 rounded-lg text-white">
@@ -32,7 +18,7 @@ export async function Balance(){
                     </div>
                     <div className="flex flex-row justify-center items-center h-full">
                         <div className="flex felx-row gap-2">
-                            <div className="text-6xl">{balanceData.amount/100}</div>
+                            <div className="text-6xl">{amount/100}</div>
                             <div className="self-end">INR</div>
                         </div>
                     </div>
@@ -43,7 +29,7 @@ export async function Balance(){
                     </div>
                     <div className="flex flex-row justify-center items-center h-full">
                         <div className="flex felx-row gap-2">
-                            <div className="text-6xl">{balanceData.locked/100}</div>
+                            <div className="text-6xl">{locked/100}</div>
                             <div className="self-end">INR</div>
                         </div>
                     </div>
@@ -54,7 +40,7 @@ export async function Balance(){
                     </div>
                     <div className="flex flex-row justify-center items-center h-full">
                         <div className="flex felx-row gap-2">
-                            <div className="text-6xl">{balanceData.amount/100 - balanceData.locked/100}</div>
+                            <div className="text-6xl">{amount/100 - locked/100}</div>
                             <div className="self-end">INR</div>
                         </div>
                     </div>

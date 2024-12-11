@@ -22,11 +22,29 @@ model User {
   phone              String?     @unique
   isEmailVerified    Boolean    @default(false)
   upi                String?     @unique
+  dob                DateTime?
+  gender             Gender?
+  address            address[]
   balance            Balance[]
   onRampTransaction  OnRampTransaction[]
   sentTransfer       p2pTransfer[]     @relation(name: "FromUser")
   receivedTransfer       p2pTransfer[]     @relation(name: "toUser")
   emailOtpVerification    emailOtpVerification[]
+}
+
+enum Gender {
+  male
+  female
+}
+
+model address{
+  id                   String     @id   @default(uuid())
+  userId               String     @unique
+  user                 User      @relation(fields: [userId],references: [id])
+  address            String?
+  city               String?
+  pincode            String?
+  country            String?
 }
 
 model emailOtpVerification{

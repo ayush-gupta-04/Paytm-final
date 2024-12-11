@@ -36,6 +36,10 @@ export async function addUpiIdAction(data : AddUpiFormat){
                             upi : data.upi
                         }
                     })
+                    return{
+                        success : true,
+                        message : "UPI ID added successfully"
+                    }
                 } catch (error) {
                     return{
                         success : false,

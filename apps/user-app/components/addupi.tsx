@@ -6,24 +6,30 @@ import { useState } from "react"
 import { useForm } from "react-hook-form";
 import { addUpiIdAction } from "../app/action/changeUpiPhone";
 import { AddUpiFormat, AddUpiSchema } from "@repo/schema/zod";
+import { useSetRecoilState } from "recoil";
+import { upiAtom } from "@paytm-repo/store/atom";
 type BackendResponse = {
     success : boolean | null,
     message : string,
 }
 
-export default function AddUpiID(){
+export default function AddUpiID({upi} : {upi : string | null }){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : ""
     })
+    const setUpi = useSetRecoilState(upiAtom);
     const[hide,setHide] = useState(true);
     const[loading,setLoading] = useState(false);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<AddUpiFormat>({resolver : zodResolver(AddUpiSchema)});
+    const {register,handleSubmit,formState : {errors},reset} = useForm<AddUpiFormat>({resolver : zodResolver(AddUpiSchema),defaultValues : {upi : upi || ""}});   //default value will be given to the upi at first.
     async function addUpi(data : AddUpiFormat){
         setLoading(true);
         const res = await addUpiIdAction(data) as BackendResponse;
         setLoading(false);
         setResponse(res);
+        if(res.success){
+            setUpi(data.upi)
+        }
     }
     return(
         <div>
@@ -32,12 +38,11 @@ export default function AddUpiID(){
                 <div className="text-[#8A8A8A]">add a upi id to make transaction more smooth</div>
             </div>
             {!hide && <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full ${!hide?"":""}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>
-                <div className="bg-white shadow-2xl   w-1/3 h-fit fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg" onClick={(e) => {e.stopPropagation()}}>
+                <div className="bg-white shadow-slate-800 shadow-2xl   w-1/3 h-fit fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg" onClick={(e) => {e.stopPropagation()}}>
                     <div className=" mx-4 py-4 border-b-2 ">Change UPI ID</div>
                     <form onSubmit = {(handleSubmit(addUpi))} className="rounded-b-lg mx-4 pt-4 flex flex-col gap-4">
                         <div className="relative mb-4">
                         <input placeholder="@paytm"
-                            
                             disabled = {loading}
                             {...register("upi")}
                             className="peer focus:bg-white shadow-sm w-full hover:bg-slate-50 rounded-md  px-3 py-3   transition-all placeholder-shown:border  focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0  placeholder:opacity-0 focus:placeholder:opacity-100" />

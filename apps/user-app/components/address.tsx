@@ -1,4 +1,21 @@
-export default function Address(){
+'use client'
+import { addressAtom } from "@paytm-repo/store/atom"
+import { useEffect } from "react"
+import { useRecoilValue, useSetRecoilState } from "recoil"
+
+type AddressType = {
+    city : string | null,
+    country : string | null,
+    address : string | null,
+    pincode : string | null
+}
+
+export default function Address({city,address,country,pincode} : AddressType){
+    const setAddress = useSetRecoilState(addressAtom);
+    const Address = useRecoilValue(addressAtom);
+    useEffect(() => {
+        setAddress({city,address,country,pincode});
+    },[])
     return(
         <div className="col-span-3 bg-white shadow-lg rounded-lg mx-3 px-3 py-2">
             <div className="flex justify-between border-b-2">
@@ -10,19 +27,19 @@ export default function Address(){
             <div className="flex flex-col py-4">
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">Address</div>
-                    <div className="font-medium text-[#404040]">Magistrate colony</div>
+                    <div className="font-medium text-[#404040]">{Address.address?`${Address.address}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">City</div>
-                    <div className="font-medium text-[#404040]">Ranchi</div>
+                    <div className="font-medium text-[#404040]">{Address.city?`${Address.city}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">Country</div>
-                    <div className="font-medium text-[#404040]">India</div>
+                    <div className="font-medium text-[#404040]">{Address.country?`${Address.country}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">Pincode</div>
-                    <div className="font-medium text-[#404040]">834002</div>
+                    <div className="font-medium text-[#404040]">{Address.pincode?`${Address.pincode}`:"--"}</div>
                 </div>
             </div>
         </div>

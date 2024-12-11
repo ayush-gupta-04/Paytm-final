@@ -1,4 +1,12 @@
-export default function PersonalDetails(){
+
+type PersonalDetailsType = {
+    firstname : string | null,
+    lastname : string | null,
+    dob : string | null,
+    gender : string | null
+}
+
+export default function PersonalDetails({firstname,lastname,dob,gender} : PersonalDetailsType){
     return(
         <div className="col-span-3 bg-white shadow-lg rounded-lg mx-3 px-3 py-2">
             <div className="flex justify-between border-b-2">
@@ -10,19 +18,19 @@ export default function PersonalDetails(){
             <div className="flex flex-col py-4">
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">firstname</div>
-                    <div className="font-medium text-[#404040]">Ayush</div>
+                    <div className="font-medium text-[#404040]">{firstname?`${firstname}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">lastname</div>
-                    <div className="font-medium text-[#404040]">Gupta</div>
+                    <div className="font-medium text-[#404040]">{lastname?`${lastname}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">date of birth</div>
-                    <div className="font-medium text-[#404040]">4th Jan 2003</div>
+                    <div className="font-medium text-[#404040]">{dob?`${dob}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">gender</div>
-                    <div className="font-medium text-[#404040]">male</div>
+                    <div className="font-medium text-[#404040]">{gender?`${gender}`:"--"}</div>
                 </div>
             </div>
         </div>
