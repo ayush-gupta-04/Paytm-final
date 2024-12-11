@@ -1,7 +1,13 @@
 'use client'
+import { zodResolver } from "@hookform/resolvers/zod"
 import { addressAtom } from "@paytm-repo/store/atom"
-import { useEffect } from "react"
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { EditAddressFormat, EditAddressSchema } from "@repo/schema/zod"
+import Error from "@repo/ui/error"
+import Success from "@repo/ui/success"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { SetterOrUpdater, useRecoilValue, useSetRecoilState } from "recoil"
+import changeAddress from "../app/action/changeaddress"
 
 type AddressType = {
     city : string | null,
@@ -10,36 +16,40 @@ type AddressType = {
     pincode : string | null
 }
 
-export default function Address({city,address,country,pincode} : AddressType){
+export default function Address({address} : {address : AddressType}){
     const setAddress = useSetRecoilState(addressAtom);
     const Address = useRecoilValue(addressAtom);
+    const[hide,setHide] = useState(true);
     useEffect(() => {
-        setAddress({city,address,country,pincode});
+        if(Address == null){
+            setAddress(address);
+        }
     },[])
     return(
         <div className="col-span-3 bg-white shadow-lg rounded-lg mx-3 px-3 py-2">
             <div className="flex justify-between border-b-2">
                 <header className="py-2 text-lg  font-medium">Personal Address</header>
-                <div className="h-fit text-[#07CBFD] my-2 mr-4 hover:cursor-pointer hover:text-black">
+                <div className="h-fit text-[#07CBFD] my-2 mr-4 hover:cursor-pointer hover:text-black" onClick={() => {setHide(!hide)}}>
                     {EditIcon()}
                 </div>
+                <EditAddress hide = {hide} address = {address} setHide = {setHide} setAddress={setAddress}></EditAddress>
             </div>
             <div className="flex flex-col py-4">
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">Address</div>
-                    <div className="font-medium text-[#404040]">{Address.address?`${Address.address}`:"--"}</div>
+                    <div className="font-medium text-[#404040]">{Address?.address?`${Address.address}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">City</div>
-                    <div className="font-medium text-[#404040]">{Address.city?`${Address.city}`:"--"}</div>
+                    <div className="font-medium text-[#404040]">{Address?.city?`${Address.city}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">Country</div>
-                    <div className="font-medium text-[#404040]">{Address.country?`${Address.country}`:"--"}</div>
+                    <div className="font-medium text-[#404040]">{Address?.country?`${Address.country}`:"--"}</div>
                 </div>
                 <div className="flex flex-rows justify-between py-2 px-2">
                     <div className="text-[#8A8A8A] font-medium">Pincode</div>
-                    <div className="font-medium text-[#404040]">{Address.pincode?`${Address.pincode}`:"--"}</div>
+                    <div className="font-medium text-[#404040]">{Address?.pincode?`${Address.pincode}`:"--"}</div>
                 </div>
             </div>
         </div>
@@ -51,5 +61,108 @@ function EditIcon(){
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
 </svg>
+    )
+}
+type BackendResponse = {
+    success : boolean | null,
+    message : string,
+}
+
+function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , address : {address : string | null,city : string | null,country : string | null,pincode : string | null},setHide : Dispatch<SetStateAction<boolean>>,setAddress : SetterOrUpdater<AddressType | null>}){
+    const[response,setResponse] = useState<BackendResponse>({
+        success : null,
+        message : ""
+    })
+    const[loading,setLoading] = useState(false);
+    const {register,handleSubmit,formState : {errors},reset} = useForm<EditAddressFormat>({resolver : zodResolver(EditAddressSchema),defaultValues : {address : address.address || "",city : address.city || "",country : address.country || "",pincode : address.pincode || ""}});
+    async function onSumbit(data : EditAddressFormat){
+        setLoading(true);
+        const res = await changeAddress(data) as BackendResponse;
+        setLoading(false);
+        setResponse(res);
+        if(res.success){
+            setAddress(data);
+        }
+    }
+    return(
+        <>
+        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-200 ${hide?"scale-0":"scale-100 "}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>
+                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}>
+                    <div className=" mx-4 py-4 border-b-2 ">Change Address</div>
+                    <form onSubmit={handleSubmit(onSumbit)} className="rounded-b-lg mx-4 pt-4 pb-4 flex flex-col gap-4">
+                        <div className="relative mb-2">
+                            <input placeholder="Address"
+                            disabled = {loading}
+                            {...register("address")}
+                            className="peer focus:bg-white shadow-sm w-full hover:bg-slate-50 rounded-md  px-3 py-3   transition-all placeholder-shown:border  focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0  placeholder:opacity-0 focus:placeholder:opacity-100" />
+                            {errors.address && (
+                                <div className="text-red-600">
+                                    {errors.address.message}
+                                </div>
+                            )}
+                            <label
+                                className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                Address
+                            </label>
+                        </div>
+                        <div className="relative mb-2">
+                            <input placeholder="City"
+                            disabled = {loading}
+                            {...register("city")}
+                            className="peer focus:bg-white shadow-sm w-full hover:bg-slate-50 rounded-md  px-3 py-3   transition-all placeholder-shown:border  focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0  placeholder:opacity-0 focus:placeholder:opacity-100" />
+                            {errors.city && (
+                                <div className="text-red-600">
+                                    {errors.city.message}
+                                </div>
+                            )}
+                            <label
+                                className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                City
+                            </label>
+                        </div>
+                        <div className="relative mb-2">
+                            <input placeholder="Country"
+                            disabled = {loading}
+                            {...register("country")}
+                            className="peer focus:bg-white shadow-sm w-full hover:bg-slate-50 rounded-md  px-3 py-3   transition-all placeholder-shown:border  focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0  placeholder:opacity-0 focus:placeholder:opacity-100" />
+                            {errors.country && (
+                                <div className="text-red-600">
+                                    {errors.country.message}
+                                </div>
+                            )}
+                            <label
+                                className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                Country
+                            </label>
+                        </div>
+                        <div className="relative">
+                            <input placeholder="Pincode"
+                            disabled = {loading}
+                            type="number"
+                            {...register("pincode")}
+                            className="peer focus:bg-white shadow-sm w-full hover:bg-slate-50 rounded-md  px-3 py-3   transition-all placeholder-shown:border  focus:border-2 focus:border-gray-900 focus:border-t-transparent focus:outline-0 disabled:border-0  placeholder:opacity-0 focus:placeholder:opacity-100" />
+                            {errors.pincode && (
+                                <div className="text-red-600">
+                                    {errors.pincode.message}
+                                </div>
+                            )}
+                            <label
+                                className="before:content[' '] after:content[' '] pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none !overflow-visible truncate text-[11px] font-normal leading-tight text-gray-500 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-gray-900 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:!border-gray-900 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:!border-gray-900 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                                Pincode
+                            </label>
+                        </div>
+                        <div>
+                            <Success message={response.message} success = {response.success}></Success>
+                            <Error message={response.message} success = {response.success}></Error>
+                        </div>
+                        <button className = {`rounded-md text-white w-full py-3 ${loading?"bg-[#4E8FFF]":"bg-[#0560FD] hover:bg-[#0045BD]"} `}
+                            disabled = {loading}>
+                            {loading?"Loading...":"Change UPI"}
+                        </button>
+                        
+                    </form>
+                </div>
+            </div>
+        </>
     )
 }

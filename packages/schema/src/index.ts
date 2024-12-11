@@ -1,4 +1,6 @@
 import zod from "zod";
+import {Gender} from "prisma/prisma-client"
+
 
 export const signupSchema = zod.object({
     firstname : zod.string({invalid_type_error : "Firstname should be of type String"}).min(1,{
@@ -89,6 +91,31 @@ export const AddUpiSchema = zod.object({
     },{message : "upi should end with @paytm",})
 })
 
+export const EditAddressSchema = zod.object({
+    address : zod.string().max(20,{message : "Address cannot be more than 20 chars"}).min(1),
+    city : zod.string().max(15,{message : "Too long name"}).min(1),
+    country : zod.string().max(15,{message : "Too long name"}).min(1),
+    pincode : zod.string().max(8,{message : "Pincode must be of 8 digits"}).refine((data) => {
+        let regex = /^[0-9]+/;
+        if(data.match(regex)){
+            return true;
+        }
+        return false;
+    })
+})
+
+export const EditDetailsSchema = zod.object({
+    firstname : zod.string().max(20,{message : "Too long name"}).min(1),
+    lastname : zod.string().max(15,{message : "Too long name"}).min(1),
+    dob : zod.string().min(1).refine((data) => {
+        const regex = /^\d{4}[-]\d{2}[-]\d{2}$/;
+        if(data.match(regex)){
+            return true
+        }
+        return false
+    }),
+    gender : zod.nativeEnum(Gender,{message : "Gender cannot be Empty"})
+})
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
@@ -97,3 +124,5 @@ export type changePassFormat = zod.infer<typeof changePassSchema>;
 export type addMoneyFormat = zod.infer<typeof addMoneySchema>;
 export type p2pFormat = zod.infer<typeof p2pSchema>;
 export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;
+export type EditAddressFormat = zod.infer<typeof EditAddressSchema>;
+export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>

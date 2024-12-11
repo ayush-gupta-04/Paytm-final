@@ -2,7 +2,7 @@
 
 
 
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient ,Gender} from '@prisma/client';
 
 
 function prismaClientSingleton() {

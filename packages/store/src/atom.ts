@@ -1,6 +1,7 @@
 import { atom, atomFamily, selector } from "recoil";
 import { recoilPersist } from 'recoil-persist';
-const {persistAtom} = recoilPersist();
+import {Gender} from "prisma/prisma-client"
+
 export const loginEmailAtom = atom({
     key : "loginEmail",
     default : ''
@@ -22,18 +23,23 @@ type AddressType = {
     country : string | null,
     pincode : string  | null
 }
-export const addressAtom = atom<AddressType>({
+export const addressAtom = atom<AddressType | null>({
     key : "address",
-    default : {
-        city : null,
-        address : null,
-        country : null,
-        pincode : null
-    }
+    default : null
 })
 
 export const upiAtom = atom<string | null>({
     key : "upi",
     default : null,
     // effects_UNSTABLE : [persistAtom]
+})
+type PersonalDetailsType = {
+    firstname : string | null,
+    lastname : string | null,
+    dob : string | null,
+    gender : Gender | null
+}
+export const personalDetailsAtom = atom<PersonalDetailsType | null>({
+    key : "personal",
+    default : null
 })

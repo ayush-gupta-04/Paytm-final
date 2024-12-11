@@ -30,17 +30,22 @@ async function getDetails() {
     const session = await getServerSession(NEXT_AUTH);
     if(!session){
         return {
-            firstname :  null,
-            lastname :  null,
+            personal : {
+                firstname :  null,
+                lastname :  null,
+                dob : null,
+                gender : null,
+            },
             email : null,
             phone : null,
             upi : null,
-            dob : null,
-            gender : null,
-            city : null,
-            country : null,
-            pincode : null,
-            address : null
+            
+            address : {
+                city : null,
+                country : null,
+                pincode : null,
+                address : null
+            }
         }
     }
     const data = await prisma.user.findFirst({
@@ -69,22 +74,29 @@ async function getDetails() {
         }
     })
     return {
-        firstname : data?.firstname  || null,
-        lastname : data?.lastname || null,
+        personal : {
+            firstname : data?.firstname  || null,
+            lastname : data?.lastname || null,
+            dob : data?.dob || null,
+            gender : data?.gender || null,
+        }
+        ,
         email : data?.email || null,
         phone : data?.phone || null,
         upi : data?.upi || null,
-        dob : data?.dob?.toDateString() || null,
-        gender : data?.gender || null,
-        address : data?.address[0]?.address || null,
-        city : data?.address[0]?.city || null,
-        pincode : data?.address[0]?.pincode || null,
-        country : data?.address[0]?.country || null
+        
+        address : {
+            address : data?.address[0]?.address || null,
+            city : data?.address[0]?.city || null,
+            pincode : data?.address[0]?.pincode || null,
+            country : data?.address[0]?.country || null
+        }
     }
 }
 
 export default async function SettingsPage(){
     const details = await getDetails();
+    console.log(details)
     return (
         <div className="min-h-screen w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative">
             <UpiHeading initialUpi = {details.upi}></UpiHeading>
@@ -94,8 +106,8 @@ export default async function SettingsPage(){
                 </div>
                 <div className="w-full h-fit rounded-lg grid grid-cols-8">
                     <ProfileCard email = {details.email} phone = {details.phone}></ProfileCard>
-                    <PersonalDetails firstname = {details.firstname} lastname = {details.lastname} dob = {details.dob}  gender = {details.gender}></PersonalDetails>
-                    <Address city = {details.city} country = {details.country} address = {details.address} pincode = {details.pincode}></Address>
+                    <PersonalDetails personalDetails = {details.personal}></PersonalDetails>
+                    <Address address = {details.address}></Address>
                 </div>
             </div>
             <div className="flex flex-col gap-3">
