@@ -1,5 +1,15 @@
+'use client'
+import { phoneAtom } from "@paytm-repo/store/atom"
+import { useEffect } from "react";
+import { useRecoilState } from "recoil"
 
-export default function ProfileCard({email,phone} : {email : string | null,phone : string | null}){
+export default function ProfileCard({email,serverPhone} : {email : string | null,serverPhone : string | null}){
+    const[phone,setPhone] = useRecoilState(phoneAtom);
+    useEffect(() => {
+        if(phone == null){
+            setPhone(serverPhone);
+        }
+    },[])
     return(
         <div className="col-span-2  mr-3 grid grid-rows-3 bg-white shadow-lg rounded-lg">
             <div className="row-span-2 flex flex-row justify-between"> 

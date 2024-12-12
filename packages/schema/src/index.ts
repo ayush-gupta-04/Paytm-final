@@ -126,6 +126,12 @@ export const ChangePhoneSchema = zod.object({
         return false
     })
 })
+
+export const ReportProblemSchema = zod.object({
+    tnxId : zod.string().min(1,{message : "Transaction ID cannot be empty"}),
+    subject : zod.string().min(1,{message : "Subject cannot be empty"}),
+    body : zod.string().min(1,{message : "body cannot be empty"})
+})
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
@@ -137,3 +143,4 @@ export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;
 export type EditAddressFormat = zod.infer<typeof EditAddressSchema>;
 export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>;
 export type ChangePhoneFormat = zod.infer<typeof ChangePhoneSchema >
+export type ReportProblemFormat = zod.infer<typeof ReportProblemSchema>

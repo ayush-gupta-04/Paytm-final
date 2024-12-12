@@ -2,11 +2,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import { addUpiIdAction } from "../app/action/changeUpiPhone";
 import { AddUpiFormat, AddUpiSchema } from "@repo/schema/zod";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { upiAtom } from "@paytm-repo/store/atom";
 type BackendResponse = {
     success : boolean | null,
@@ -18,10 +18,16 @@ export default function AddUpiID({upi} : {upi : string | null }){
         success : null,
         message : ""
     })
-    const setUpi = useSetRecoilState(upiAtom);
+    const[upiId,setUpi] = useRecoilState(upiAtom);
+    useEffect(()=> {
+        if(upiId == null){
+            setUpi(upi);
+        }
+        reset({upi : upiId || ""})
+    },[upiId])
     const[hide,setHide] = useState(true);
     const[loading,setLoading] = useState(false);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<AddUpiFormat>({resolver : zodResolver(AddUpiSchema),defaultValues : {upi : upi || ""}});   //default value will be given to the upi at first...i have not used atoms for default values here
+    const {register,handleSubmit,formState : {errors},reset} = useForm<AddUpiFormat>({resolver : zodResolver(AddUpiSchema),defaultValues : {upi : upiId || ""}});   //default value will be given to the upi at first...i have not used atoms for default values here
     async function addUpi(data : AddUpiFormat){
         setLoading(true);
         const res = await addUpiIdAction(data) as BackendResponse;

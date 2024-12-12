@@ -22,12 +22,12 @@ type PersonalDetailsType = {
 }
 
 
-export default function PersonalDetails({personalDetails} : {personalDetails : PersonalDetailsType}){
+export default function PersonalDetails({serverDetails} : {serverDetails : PersonalDetailsType}){
     const[hide,setHide] = useState(true);
     const[details,setDetails] = useRecoilState(personalDetailsAtom);
     useEffect(() => {
         if(details == null){
-            setDetails(personalDetails);
+            setDetails(serverDetails);
         }
     },[])
     return(

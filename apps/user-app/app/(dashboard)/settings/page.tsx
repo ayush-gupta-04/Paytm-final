@@ -105,8 +105,8 @@ export default async function SettingsPage(){
                     Personal settings
                 </div>
                 <div className="w-full h-fit rounded-lg grid grid-cols-8">
-                    <ProfileCard email = {details.email} phone = {details.phone}></ProfileCard>
-                    <PersonalDetails personalDetails = {details.personal}></PersonalDetails>
+                    <ProfileCard email = {details.email} serverPhone = {details.phone}></ProfileCard>
+                    <PersonalDetails serverDetails = {details.personal}></PersonalDetails>
                     <Address address = {details.address}></Address>
                 </div>
             </div>
@@ -117,7 +117,7 @@ export default async function SettingsPage(){
                 <div className="w-full h-fit rounded-lg bg-white shadow-lg">
                     <ChangePassword></ChangePassword>
                     <AddUpiID upi = {details?.upi}></AddUpiID>
-                    <AddPhone phone = {details.phone}></AddPhone>
+                    <AddPhone serverPhone = {details.phone}></AddPhone>
                     <SetTpin></SetTpin>
                     <ContactUs></ContactUs>
                     <Logout></Logout>
