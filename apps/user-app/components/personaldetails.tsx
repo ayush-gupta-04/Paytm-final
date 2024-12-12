@@ -26,9 +26,6 @@ export default function PersonalDetails({personalDetails} : {personalDetails : P
     const[hide,setHide] = useState(true);
     const[details,setDetails] = useRecoilState(personalDetailsAtom);
     useEffect(() => {
-
-        //details are null if i do a hard reload or first time visit .. then only i want it to be updated with the Server rendered value.
-        //otherwise the server rendered value is stale for some time so i don't want to update the state with the stale value...will cause inconsistency.
         if(details == null){
             setDetails(personalDetails);
         }
@@ -40,7 +37,7 @@ export default function PersonalDetails({personalDetails} : {personalDetails : P
                 <div className="h-fit text-[#07CBFD] my-2 mr-4 hover:cursor-pointer hover:text-black" onClick={() => {setHide(!hide)}}>
                     {EditIcon()}
                 </div>
-                <EditPersonalDetails hide = {hide} setHide = {setHide} details = {personalDetails} setDetails = {setDetails}></EditPersonalDetails>
+                <EditPersonalDetails hide = {hide} setHide = {setHide} details = {details} setDetails = {setDetails}></EditPersonalDetails>
             </div>
             <div className="flex flex-col py-4">
                 <div className="flex flex-rows justify-between py-2 px-2">
@@ -78,13 +75,21 @@ type BackendResponse = {
     message : string,
 }
 
-function EditPersonalDetails({hide,setHide,details,setDetails} : {hide : boolean,setHide : Dispatch<SetStateAction<boolean>>,details : PersonalDetailsType,setDetails : SetterOrUpdater<PersonalDetailsType | null>}){
+function EditPersonalDetails({hide,setHide,details,setDetails} : {hide : boolean,setHide : Dispatch<SetStateAction<boolean>>,details : PersonalDetailsType | null,setDetails : SetterOrUpdater<PersonalDetailsType | null>}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : ""
     })
     const[loading,setLoading] = useState(false);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<EditDetailsFormat>({resolver : zodResolver(EditDetailsSchema),defaultValues : {firstname : details.firstname || "",lastname : details.lastname || "",dob : details.dob || "",gender : details.gender || undefined}});
+    const {register,handleSubmit,formState : {errors},reset} = useForm<EditDetailsFormat>({resolver : zodResolver(EditDetailsSchema),defaultValues : {firstname : details?.firstname || "",lastname : details?.lastname || "",dob : details?.dob || "",gender : details?.gender || undefined}});
+    useEffect(() => {
+        reset({
+            firstname : details?.firstname || "",
+            lastname : details?.lastname || "",
+            dob : details?.dob || "",
+            gender : details?.gender || undefined
+        })
+    },[details])
     async function onSumbit(data : EditDetailsFormat){
         setLoading(true);
         const res = await changePersonalDetails(data) as BackendResponse;
@@ -97,9 +102,9 @@ function EditPersonalDetails({hide,setHide,details,setDetails} : {hide : boolean
 
     return(
         <>
-            <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-200 ${hide?"scale-0":"scale-100 "}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>{/* onclicking the div i should reset the value to default values */}
-                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}>{/* stopPropagation of the click to this div itself ... i don't want to spread it above this div */}
-                    <div className=" mx-4 py-4 border-b-2 ">Change Address</div>
+            <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-200 ${hide?"scale-y-0":"scale-y-100 "}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>
+                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}>
+                    <div className=" mx-4 py-4 border-b-2 text-lg">Change Personal details</div>
                     <form onSubmit={handleSubmit(onSumbit)} className="rounded-b-lg mx-4 pt-4 pb-4 flex flex-col gap-4">
                         <div className="relative mb-2">
                             <input placeholder="Firstname"

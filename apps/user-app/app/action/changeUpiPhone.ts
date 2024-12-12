@@ -1,5 +1,5 @@
 'use server'
-import { AddUpiFormat, AddUpiSchema } from "@repo/schema/zod";
+import { AddUpiFormat, AddUpiSchema, ChangePhoneFormat, ChangePhoneSchema } from "@repo/schema/zod";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../../lib/auth";
 import prisma from "@paytm-repo/db/client";
@@ -14,7 +14,7 @@ export async function addUpiIdAction(data : AddUpiFormat){
         }
     }
     if(format.success){
-        const userId : string = session?.user.id;
+        const userId : string = session.user.id;
         try {
             const alreadyExist = await prisma.user.findFirst({
                 where : {
@@ -57,6 +57,53 @@ export async function addUpiIdAction(data : AddUpiFormat){
         return{
             success : false,
             message : "Invalid format!!"
+        }
+    }
+}
+
+
+
+export async function changePhoneAction(data : ChangePhoneFormat){
+    const format = ChangePhoneSchema.safeParse(data);
+    const session = await getServerSession(NEXT_AUTH);
+    if(!session || !session.user){
+        return{
+            success: false,
+            message : "Invalid token!"
+        }
+    }
+    if(format.success){
+        const userId : string = session.user.id;
+        try {
+            const update = await prisma.user.update({
+                where : {
+                    id : userId
+                },
+                data : {
+                    phone : data.phone
+                }
+            })
+            if(update){
+                return{
+                    success : true,
+                    message : "Changes saved successfully"
+                }
+            }else{
+                return{
+                    success : true,
+                    message : "Changes saved successfully"
+                }
+            }
+        } catch (error) {
+            return{
+                success : false,
+                message : "Something is down"
+            }
+        }
+    }else{
+        return{
+            success : false,
+            message : "Invalid input!"
         }
     }
 }

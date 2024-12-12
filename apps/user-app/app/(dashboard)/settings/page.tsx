@@ -117,7 +117,7 @@ export default async function SettingsPage(){
                 <div className="w-full h-fit rounded-lg bg-white shadow-lg">
                     <ChangePassword></ChangePassword>
                     <AddUpiID upi = {details?.upi}></AddUpiID>
-                    <AddPhone></AddPhone>
+                    <AddPhone phone = {details.phone}></AddPhone>
                     <SetTpin></SetTpin>
                     <ContactUs></ContactUs>
                     <Logout></Logout>

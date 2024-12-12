@@ -43,3 +43,9 @@ export const personalDetailsAtom = atom<PersonalDetailsType | null>({
     key : "personal",
     default : null
 })
+
+export const phoneAtom = atom<string | null>({
+    key : "phone",
+    default : null,
+    // effects_UNSTABLE : [persistAtom]
+})

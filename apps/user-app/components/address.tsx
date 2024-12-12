@@ -16,11 +16,17 @@ type AddressType = {
     pincode : string | null
 }
 
+
+//the values coming are server rendered values.
+//i will first set the state with it to have a consistency.
+//Iss card m jo information show hoga vo atom wala address show hoga.
 export default function Address({address} : {address : AddressType}){
     const setAddress = useSetRecoilState(addressAtom);
     const Address = useRecoilValue(addressAtom);
     const[hide,setHide] = useState(true);
     useEffect(() => {
+        //details are null if i do a hard reload or first time visit .. then only i want it to be updated with the Server rendered value.
+        //otherwise the server rendered value is stale for some time so i don't want to update the state with the stale value...will cause inconsistency.
         if(Address == null){
             setAddress(address);
         }
@@ -32,7 +38,7 @@ export default function Address({address} : {address : AddressType}){
                 <div className="h-fit text-[#07CBFD] my-2 mr-4 hover:cursor-pointer hover:text-black" onClick={() => {setHide(!hide)}}>
                     {EditIcon()}
                 </div>
-                <EditAddress hide = {hide} address = {address} setHide = {setHide} setAddress={setAddress}></EditAddress>
+                {<EditAddress hide = {hide} address = {Address} setHide = {setHide} setAddress={setAddress}></EditAddress>}     {/*conditional rendering would optimise but would cause a lot of effort to add transition in it. */}
             </div>
             <div className="flex flex-col py-4">
                 <div className="flex flex-rows justify-between py-2 px-2">
@@ -56,25 +62,33 @@ export default function Address({address} : {address : AddressType}){
     )
 }
 
-function EditIcon(){
-    return(
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-</svg>
-    )
-}
+
 type BackendResponse = {
     success : boolean | null,
     message : string,
 }
 
-function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , address : {address : string | null,city : string | null,country : string | null,pincode : string | null},setHide : Dispatch<SetStateAction<boolean>>,setAddress : SetterOrUpdater<AddressType | null>}){
+
+//value of atom will come for default value of the form.
+function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , address : {address : string | null,city : string | null,country : string | null,pincode : string | null} | null,setHide : Dispatch<SetStateAction<boolean>>,setAddress : SetterOrUpdater<AddressType | null>}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : ""
     })
     const[loading,setLoading] = useState(false);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<EditAddressFormat>({resolver : zodResolver(EditAddressSchema),defaultValues : {address : address.address || "",city : address.city || "",country : address.country || "",pincode : address.pincode || ""}});
+    const {register,handleSubmit,formState : {errors},reset} = useForm<EditAddressFormat>({resolver : zodResolver(EditAddressSchema),defaultValues : {address : address?.address || "",city : address?.city || "",country : address?.country || "",pincode : address?.pincode || ""}});  //default value will be given to the address at first...i have used atoms for default values here
+    
+    //The useForm hook sets the default value only on first render when the page loads or when we hard reload.
+    //So at first the address was null...null was being set....it was a problem.
+    //So whenever address changes we are reseting the value of the form with new value of address.
+    useEffect(() => {
+        reset({ 
+            address: address?.address || "",
+            city: address?.city || "", 
+            country: address?.country || "", 
+            pincode: address?.pincode || "" 
+        }); 
+    }, [address]);
     async function onSumbit(data : EditAddressFormat){
         setLoading(true);
         const res = await changeAddress(data) as BackendResponse;
@@ -86,9 +100,9 @@ function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , addre
     }
     return(
         <>
-        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-200 ${hide?"scale-0":"scale-100 "}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>
-                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}>
-                    <div className=" mx-4 py-4 border-b-2 ">Change Address</div>
+        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-250 ${hide?"scale-y-0 ":"scale-y-100"}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>  {/*If i close the form , Values must reset to default..or just reset(). */}
+                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}> {/* stopPropagation of the click to this div itself ... i don't want to spread it above this div */}
+                    <div className=" mx-4 py-4 border-b-2 text-lg">Change Address</div>
                     <form onSubmit={handleSubmit(onSumbit)} className="rounded-b-lg mx-4 pt-4 pb-4 flex flex-col gap-4">
                         <div className="relative mb-2">
                             <input placeholder="Address"
@@ -159,10 +173,18 @@ function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , addre
                             disabled = {loading}>
                             {loading?"Loading...":"Change UPI"}
                         </button>
-                        
                     </form>
                 </div>
             </div>
         </>
+    )
+}
+
+
+function EditIcon(){
+    return(
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+</svg>
     )
 }

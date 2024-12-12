@@ -116,6 +116,16 @@ export const EditDetailsSchema = zod.object({
     }),
     gender : zod.nativeEnum(Gender,{message : "Gender cannot be Empty"})
 })
+
+export const ChangePhoneSchema = zod.object({
+    phone : zod.string().length(10,{message :"Phone should be of length 10 only"}).refine((data)=>{
+        const regex = /^\d{10}$/;
+        if(data.match(regex)){
+            return true
+        }
+        return false
+    })
+})
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
@@ -125,4 +135,5 @@ export type addMoneyFormat = zod.infer<typeof addMoneySchema>;
 export type p2pFormat = zod.infer<typeof p2pSchema>;
 export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;
 export type EditAddressFormat = zod.infer<typeof EditAddressSchema>;
-export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>
+export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>;
+export type ChangePhoneFormat = zod.infer<typeof ChangePhoneSchema >
