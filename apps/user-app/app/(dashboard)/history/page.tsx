@@ -4,9 +4,29 @@ import { NEXT_AUTH } from "../../../lib/auth";
 import prisma from "@paytm-repo/db/client";
 import P2PTransactions from "../../../components/p2pTransactions";
 import TransactionsWithFilter from "../../../components/transactions";
-
+import { tree } from "next/dist/build/templates/app-page";
+type Transactions = {
+    onRamp : boolean,
+    send : boolean,
+    time : string,
+    amount : number,
+    status : string,
+    provider : string,
+    timeInSeconds : string,
+    transactionId : string,
+    sender : {
+        name : string | null,
+        phone : string | null,
+        upi : string | null
+    },
+    receiver : {
+        name : string | null,
+        phone : string | null,
+        upi : string | null
+    }
+}
 async function getOnRampTransactions(){
-    const session =await getServerSession(NEXT_AUTH);
+    const session = await getServerSession(NEXT_AUTH);
     if(!session || !session.user){
         return []
     }
@@ -18,10 +38,15 @@ async function getOnRampTransactions(){
     })
     return data.map((tnx) => {
         return{
+            onRamp : true,
+            send : false,
+            p2p : false,
             time : tnx.startTime.toDateString() + " " + tnx.startTime.toLocaleTimeString(),
             amount : tnx.amount,
             status : tnx.status.toString(),
-            provider : tnx.provider
+            provider : tnx.provider,
+            transactionId : tnx.id,
+            timeInSeconds : tnx.startTime.getTime(),
         }
     })
 }
@@ -44,40 +69,71 @@ async function getP2PTransactions(){
                 }
             ]
         },
-        include : {
+        select : {
             fromUser : {
                 select : {
                     firstname : true,
                     lastname : true,
-                    phone : true
                 }
             },
             toUser : {
                 select : {
                     firstname : true,
                     lastname : true,
-                    phone : true
                 }
-            }
+            },
+            fromUserPhone : true,
+            fromUserUpi : true,
+            toUserPhone : true,
+            toUserUpi : true,
+            fromUserId : true,
+            toUserId : true,
+            timestamp : true,
+            amount : true,
+            id : true,
         }
     })
-    console.log(data)
+
     return data.map((tnx) => {
         if(tnx.fromUserId == userId){
             return {
+                onRamp : false,
+                p2p : true,
                 send : true,
-                name : tnx.toUser.firstname + " " + tnx.toUser.lastname,
-                phone : tnx.toUser.phone,
+                transactionId : tnx.id,
+                sender : {
+                    name : tnx.fromUser.firstname + " " + tnx.fromUser.lastname,
+                    phone : tnx.fromUserPhone,
+                    upi : tnx.fromUserUpi
+                },
+                receiver : {
+                    name : tnx.toUser.firstname + " " + tnx.toUser.lastname,
+                    phone : tnx.toUserPhone,
+                    upi : tnx.toUserUpi
+                },
                 amount : tnx.amount,
                 time : tnx.timestamp.toDateString() + " " + tnx.timestamp.toLocaleTimeString(),
+                timeInSeconds : tnx.timestamp.getTime(),
             }
         }else{
             return {
+                onRamp : false,
+                p2p : true,
                 send : false,
-                name : tnx.fromUser.firstname + " " + tnx.fromUser.lastname,
-                phone : tnx.fromUser.phone,
+                transactionId : tnx.id,
+                sender : {
+                    name : tnx.fromUser.firstname + " " + tnx.fromUser.lastname,
+                    phone : tnx.fromUserPhone,
+                    upi : tnx.fromUserUpi
+                },
+                receiver : {
+                    name : tnx.toUser.firstname + " " + tnx.toUser.lastname,
+                    phone : tnx.toUserPhone,
+                    upi : tnx.toUserUpi
+                },
                 amount : tnx.amount,
                 time : tnx.timestamp.toDateString() + " " + tnx.timestamp.toLocaleTimeString(),
+                timeInSeconds : tnx.timestamp.getTime(),
             }
         }
     })
@@ -89,6 +145,8 @@ async function getP2PTransactions(){
 export default async function HistoryOfTransaction(){
     const onRampTnx = await getOnRampTransactions();
     const p2pTnx = await getP2PTransactions();
+    const transactions = [...onRampTnx,...p2pTnx].sort((a,b) => a.timeInSeconds - b.timeInSeconds);
+    
     return (
         <div className="min-h-screen w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC]"> 
             <div className="w-full h-10 shadow-sm bg-white rounded-md flex flex-row justify-between">
@@ -98,11 +156,11 @@ export default async function HistoryOfTransaction(){
                     <CopyIcon></CopyIcon>
                 </div>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 h-full">
                 <div className="w-fit h-fit px-3 py-2 bg-[#0560FD] text-white rounded-lg">
                     Transaction history
                 </div>
-                <TransactionsWithFilter onRampTnx={onRampTnx} p2pTnx={p2pTnx}></TransactionsWithFilter>
+                <TransactionsWithFilter transactions ={transactions} ></TransactionsWithFilter>
             </div>
         </div>
     )

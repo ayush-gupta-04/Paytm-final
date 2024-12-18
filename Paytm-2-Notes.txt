@@ -121,3 +121,13 @@ PROBLEMS :
    --> 4. On saving the changes the state must be updated.
 
 
+7. In the pop-up transition.
+   --> What i wanted --> when i click a button a popup appears with a full screen transparent div behind it.
+   --> Why transparent div ?? --> because i don't want the user to click another item on page when a menu is open...if he clicks the bg div will automatically close the menu.
+   --> How i achieved --> 
+       --> <BackgroundSupported/> --> with props --> w-screen z-10 fixed top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 h-full duration-300 ${hide?"opacity-0 pointer-events-none":"opacity-100 backdrop-brightness-50"}
+       --> <Popup/> --> with props --> w-1/3 fixed z-20 top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 rounded-lg duration-300 ${hide?"scale-90 opacity-0 pointer-events-none":"scale-100 opacity-100"}
+   --> If i want to dim the brightness of underlying div --> backdrop-brightness
+   --> If i want that if a div is present then onClicking it nothing should happen --> pointer-events-none
+
+8. No transition in conditional rendering.

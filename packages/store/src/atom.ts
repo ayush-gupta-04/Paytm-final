@@ -1,6 +1,7 @@
 import { atom, atomFamily, selector } from "recoil";
 import { recoilPersist } from 'recoil-persist';
 import {Gender} from "prisma/prisma-client"
+const {persistAtom} = recoilPersist();
 
 export const loginEmailAtom = atom({
     key : "loginEmail",
@@ -41,11 +42,51 @@ type PersonalDetailsType = {
 }
 export const personalDetailsAtom = atom<PersonalDetailsType | null>({
     key : "personal",
-    default : null
+    default : null,
+    // effects_UNSTABLE : [persistAtom]
 })
 
 export const phoneAtom = atom<string | null>({
     key : "phone",
     default : null,
     // effects_UNSTABLE : [persistAtom]
+})
+
+type onRampTnx = {
+    onRamp: boolean;
+    send: boolean;
+    p2p : boolean;
+    time: string;
+    amount: number;
+    status: string;
+    provider: string;
+    timeInSeconds: number;
+} 
+
+type p2pTnx = {
+    onRamp: boolean;
+    send: boolean;
+    p2p : boolean;
+    transactionId: string;
+    sender: {
+        name: string;
+        phone: string | null;
+        upi: string | null;
+    };
+    receiver: {
+        name: string;
+        phone: string | null;
+        upi: string | null;
+    };
+    amount: number;
+    time: string;
+    timeInSeconds: number;
+    
+}
+
+type CombinedTransactions = p2pTnx | onRampTnx
+
+export const transactionAtom = atom<CombinedTransactions[] | null>({
+    key: "tnx",
+    default : null
 })

@@ -1,6 +1,6 @@
 'use client'
 import { upiAtom } from "@paytm-repo/store/atom"
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil"
 
 export default function UpiHeading({initialUpi} : {initialUpi : string | null}){
@@ -11,14 +11,28 @@ export default function UpiHeading({initialUpi} : {initialUpi : string | null}){
         //thats y i was getting a stale value until it loaded again on server.
         if(upi == null){
             setUpi(initialUpi);
+            
         }
+
     },[])
+    const divRef = useRef<HTMLDivElement>(null);
+    function copyToClipboard1(){
+        if(divRef.current){
+            const text = divRef.current.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to Clipboard")
+            },(err) => {
+                console.log("Cannot copy")
+            });
+        }
+        
+    }
     return(
         <div className="w-full h-10 shadow-sm bg-white rounded-md flex flex-row justify-between">
             <div className="self-center px-3 font-semibold">{upi?"Your UPI ID":"Add a new UPI ID now"}</div>
             <div className="self-center px-3 flex flex-row gap-4">
-            <div className="text-green-600 font-semibold">{upi}</div>
-            <CopyIcon></CopyIcon>
+            <div className="text-green-600 font-semibold" ref={divRef}>{upi}</div>
+            <div onClick={() => {copyToClipboard1()}}><CopyIcon></CopyIcon></div>
         </div>
         </div>
     )

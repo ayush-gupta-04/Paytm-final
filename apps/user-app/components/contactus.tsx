@@ -3,14 +3,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ReportProblemFormat, ReportProblemSchema } from "@repo/schema/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
-import React , { Dispatch, SetStateAction, useRef, useState } from "react";
+import React , { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import ReportProblemAction from "../app/action/report";
+import Button1 from "./button";
 
 export default function ContactUs(){
     const[hide,setHide] = useState(true);
     return(
-        <div className=" px-4 py-5 flex flex-col border-b-2 hover:bg-gray-100" onClick={() => {setHide(!hide)}}>
+        <div className=" px-4 py-5 flex flex-col border-b-2 hover:bg-gray-100" onClick={() => {setHide(false)}}>
             <div className="text-xl hover:cursor-pointer hover:font-medium">Contact us</div>
             <ContactUsCard hide = {hide} setHide = {setHide}></ContactUsCard>
         </div>
@@ -27,6 +28,7 @@ function ContactUsCard({hide,setHide} : {hide : boolean,setHide: Dispatch<SetSta
         success : null,
         message : ""
     })
+    const[showCopied,setShowCopied] = useState(false);
     const[loading,setLoading] = useState(false);
     const {register,handleSubmit,formState : {errors},reset} = useForm<ReportProblemFormat>({resolver : zodResolver(ReportProblemSchema)});
     async function onSumbit(data : ReportProblemFormat){
@@ -44,7 +46,7 @@ function ContactUsCard({hide,setHide} : {hide : boolean,setHide: Dispatch<SetSta
         if(divRef1.current){
             const text = divRef1.current.innerText;
             navigator.clipboard.writeText(text).then(() => {
-               alert("Copied to Clipboard")
+                alert("Text Copied")
             },(err) => {
                 console.log("Cannot copy")
             });
@@ -55,17 +57,19 @@ function ContactUsCard({hide,setHide} : {hide : boolean,setHide: Dispatch<SetSta
         if(divRef2.current){
             const text = divRef2.current.innerText;
             navigator.clipboard.writeText(text).then(() => {
-               alert("Copied to Clipboard")
+                alert("text copied")
             },(err) => {
                 console.log("Cannot copy")
             });
         }
         
     }
+
+    //TODO : bg div m onClick hatao .. ek cancel button do menu me.
     return(
         <>
-        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-250 ${hide?"scale-y-0 ":"scale-y-100"}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>  {/*If i close the form , Values must reset to default..or just reset(). */}
-                <div className={`bg-white shadow-slate-800 shadow-2xl py-4 px-4 w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}> {/* stopPropagation of the click to this div itself ... i don't want to spread it above this div */}
+        <BackgroundSupporter hide = {hide}></BackgroundSupporter>
+        <div className={`bg-white shadow-slate-800 shadow-2xl py-4 px-4 w-1/3 fixed z-20 top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 rounded-lg duration-300 ${hide?"scale-90 opacity-0 pointer-events-none":"scale-100 opacity-100"}`} onClick={(e) => {e.stopPropagation()}}> {/* stopPropagation of the click to this div itself ... i don't want to spread it above this div */}
                     <div className="pb-2 border-b-2 text-lg">Contact Us</div>
                     <div className="py-4 flex flex-col gap-3 border-b-2">
                         <div className="flex flex-row justify-between">
@@ -139,13 +143,13 @@ function ContactUsCard({hide,setHide} : {hide : boolean,setHide: Dispatch<SetSta
                             <Success message={response.message} success = {response.success}></Success>
                             <Error message={response.message} success = {response.success}></Error>
                         </div>
-                        <button className = {`rounded-md text-white w-full py-3 ${loading?"bg-red-400":"bg-red-600 hover:bg-red-700"} `}
-                            disabled = {loading}>
-                            {loading?"Loading...":"Report"}
-                        </button>
+                        <div className="flex flex-row gap-2">
+                            <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {reset();setResponse({success : null,message : ""});setHide(true);e.stopPropagation()}}>Cancel</div> {/*If i close the form , Values must reset to default..or just reset(). */}
+                            <Button1 loading = {loading} text="Save Changes"></Button1>
+                        </div>
                     </form>
                 </div>
-            </div>
+            
         </>
     )
 }
@@ -179,3 +183,11 @@ function CopyIcon(){
         </svg>
     )
 }
+
+function BackgroundSupporter({hide} : {hide : boolean}){
+    return(
+        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 h-full duration-300 ${hide?"opacity-0 pointer-events-none":"opacity-100 backdrop-brightness-50"}`}>  
+        </div>
+    )
+}
+

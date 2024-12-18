@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { SetterOrUpdater, useRecoilValue, useSetRecoilState } from "recoil"
 import changeAddress from "../app/action/changeaddress"
+import Button1 from "./button"
 
 type AddressType = {
     city : string | null,
@@ -100,8 +101,8 @@ function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , addre
     }
     return(
         <>
-        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 h-full duration-250 ${hide?"scale-y-0 ":"scale-y-100"}`} onClick={() => {if(!loading){reset();setResponse({success : null,message : ""});setHide(!hide)}}}>  {/*If i close the form , Values must reset to default..or just reset(). */}
-                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-1000 top-1/2 left-1/2 transition-transform -translate-x-1/2 -translate-y-1/2 rounded-lg `} onClick={(e) => {e.stopPropagation()}}> {/* stopPropagation of the click to this div itself ... i don't want to spread it above this div */}
+        <BackgroundSupporter hide = {hide}></BackgroundSupporter> 
+                <div className={`bg-white shadow-slate-800 shadow-2xl   w-1/3 fixed z-20 top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 rounded-lg duration-300 ${hide?"scale-90 opacity-0 pointer-events-none":"scale-100 opacity-100"} `} onClick={(e) => {e.stopPropagation()}}> {/* stopPropagation of the click to this div itself ... i don't want to spread it above this div */}
                     <div className=" mx-4 py-4 border-b-2 text-lg">Change Address</div>
                     <form onSubmit={handleSubmit(onSumbit)} className="rounded-b-lg mx-4 pt-4 pb-4 flex flex-col gap-4">
                         <div className="relative mb-2">
@@ -169,13 +170,12 @@ function EditAddress({hide,address,setHide,setAddress} : {hide : boolean , addre
                             <Success message={response.message} success = {response.success}></Success>
                             <Error message={response.message} success = {response.success}></Error>
                         </div>
-                        <button className = {`rounded-md text-white w-full py-3 ${loading?"bg-[#4E8FFF]":"bg-[#0560FD] hover:bg-[#0045BD]"} `}
-                            disabled = {loading}>
-                            {loading?"Loading...":"Change UPI"}
-                        </button>
+                        <div className="flex flex-row gap-2">
+                            <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {reset();setResponse({success : null,message : ""});setHide(true);e.stopPropagation()}}>Cancel</div>   {/*If i close the form , Values must reset to default..or just reset(). */}
+                            <Button1 loading = {loading} text="Save Changes"></Button1>
+                        </div>
                     </form>
                 </div>
-            </div>
         </>
     )
 }
@@ -186,5 +186,13 @@ function EditIcon(){
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
 </svg>
+    )
+}
+
+
+function BackgroundSupporter({hide} : {hide : boolean}){
+    return(
+        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 h-full duration-300 ${hide?"opacity-0 pointer-events-none":"opacity-100 backdrop-brightness-50"}`} onClick={(e) => {e.stopPropagation()}}>  
+        </div>
     )
 }
