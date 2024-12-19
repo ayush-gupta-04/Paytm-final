@@ -90,3 +90,9 @@ export const transactionAtom = atom<CombinedTransactions[] | null>({
     key: "tnx",
     default : null
 })
+
+
+export const changePasswordPopupAtom = atom<{email : string | null,token : string | null,otp : string | null} | null>({
+    key : "changePasswordPopup",
+    default : null
+})

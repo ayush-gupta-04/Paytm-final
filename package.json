@@ -21,6 +21,8 @@
     "packages/*"
   ],
   "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
     "react-transition-group": "^4.4.5",
     "styled-components": "^6.1.13"
   }

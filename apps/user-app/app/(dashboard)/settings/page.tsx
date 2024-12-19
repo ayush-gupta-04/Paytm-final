@@ -3,15 +3,15 @@ import { getServerSession } from "next-auth"
 import AddPhone from "../../../components/addphone"
 import Address from "../../../components/address"
 import AddUpiID from "../../../components/addupi"
-import ChangePassword from "../../../components/changepassword"
 import ContactUs from "../../../components/contactus"
 import Logout from "../../../components/logout"
 import PersonalDetails from "../../../components/personaldetails"
 import ProfileCard from "../../../components/profile"
-import SetTpin from "../../../components/settpin"
+import SetTpin from "../../../components/changeAddTpin"
 import { NEXT_AUTH } from "../../../lib/auth"
 import prisma from "@paytm-repo/db/client"
 import UpiHeading from "../../../components/upiheading"
+import ChangePasswordElement from "../../../components/changepassword"
 
 type Details = {
     firstname :  string | null,
@@ -114,7 +114,7 @@ export default async function SettingsPage(){
                     Other settings
                 </div>
                 <div className="w-full h-fit rounded-lg bg-white shadow-lg">
-                    <ChangePassword></ChangePassword>
+                    <ChangePasswordElement></ChangePasswordElement>
                     <AddUpiID upi = {details?.upi}></AddUpiID>
                     <AddPhone serverPhone = {details.phone}></AddPhone>
                     <SetTpin></SetTpin>

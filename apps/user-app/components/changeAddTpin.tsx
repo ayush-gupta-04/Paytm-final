@@ -1,20 +1,23 @@
 'use client'
-import {  useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import {useSetRecoilState } from "recoil";
 import { changePasswordPopupAtom } from "@paytm-repo/store/atom";
 import SendEmailPopup from "./sendMailPopup";
 import VerifyOtpPopup from "./verifyOtpPopup";
-import ChangePasswordPopup from "./changePasswordPopup";
 
-export default function ChangePasswordElement(){
+import ChangeAddTpinPopup from "./changeAddTpinPopup";
+
+
+//TODO : email can only be send if email == session wala email.
+export default function SetTpin(){
     const[step,setStep] = useState<string | null>(null);
     const setChangePasswordPopup = useSetRecoilState(changePasswordPopupAtom)
     function handleNextStep(){
         if(step == 'email'){
             setStep('otp')
         }else if(step == 'otp'){
-            setStep('password')
-        }else if(step == 'password'){
+            setStep('tpin')
+        }else if(step == 'tpin'){
             setStep(null)
         }
     }
@@ -23,7 +26,7 @@ export default function ChangePasswordElement(){
             setStep(null)
         }else if(step == 'otp'){
             setStep('email')
-        }else if(step == 'password'){
+        }else if(step == 'tpin'){
             setStep('otp')
         }
     }
@@ -33,16 +36,22 @@ export default function ChangePasswordElement(){
         }
     },[step])
     return(
-        <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100" onClick={() => {setStep('email')}}>
-            <div className="text-xl hover:cursor-pointer hover:font-medium">Change Password</div>
-            <div className="text-[#8A8A8A]">change old password with a new one</div>
+        <div>
+            <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100" onClick={() => {setStep('email')}}>
+                <div className="text-xl hover:cursor-pointer hover:font-medium">Change/Add TPIN</div>
+                <div className="text-[#8A8A8A]">change old tpin with a new one</div>
+            </div>
             <BackgroundSupporter hide = {step == null}></BackgroundSupporter>
             {step == "email" && <SendEmailPopup onSuccess = {handleNextStep} onBack = {handlePreviousStep} step = {step} setStep={setStep}></SendEmailPopup>}
             {step == 'otp' && <VerifyOtpPopup onSuccess = {handleNextStep} onBack = {handlePreviousStep} step = {step} setStep={setStep}></VerifyOtpPopup>}
-            {step == 'password' && <ChangePasswordPopup onSuccess = {handleNextStep} onBack = {handlePreviousStep} step = {step} setStep={setStep}></ChangePasswordPopup>}
+            {step == 'tpin' && <ChangeAddTpinPopup onSuccess = {handleNextStep} onBack = {handlePreviousStep} step = {step} setStep={setStep}></ChangeAddTpinPopup>}
         </div>
+        
     )
 }
+
+
+
 
 
 
@@ -52,6 +61,3 @@ function BackgroundSupporter({hide} : {hide : boolean}){
         </div>
     )
 } 
-
-
-

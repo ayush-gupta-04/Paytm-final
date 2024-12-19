@@ -27,6 +27,7 @@ model User {
   upi                String?     @unique
   dob                String?
   gender             Gender?
+  tpin               String?    
   address            address[]
   balance            Balance[]
   onRampTransaction  OnRampTransaction[]

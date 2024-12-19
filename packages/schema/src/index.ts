@@ -1,4 +1,4 @@
-import zod from "zod";
+import zod, { number } from "zod";
 import {Gender} from "prisma/prisma-client"
 
 
@@ -132,6 +132,50 @@ export const ReportProblemSchema = zod.object({
     subject : zod.string().min(1,{message : "Subject cannot be empty"}),
     body : zod.string().min(1,{message : "body cannot be empty"})
 })
+export const newOtpSchema = zod.object({
+    otp1 : zod.string().length(1).refine((data) => {
+        return (Number(data) >= 0 && Number(data) <= 9)
+    }),
+    otp2 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    otp3 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    otp4 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    otp5 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    otp6 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    })
+})
+
+export const changeAddTpinSchema = zod.object({
+    tpin : zod.string().length(6).refine((data) => {
+        for(let i = 0 ; i < data.length ; i++){
+            if(!(Number(data.charAt(i)) >= 0 && Number(data.charAt(i)) <= 9)){
+                return false;
+            }
+        }
+        return true;
+    }),
+    confirmTpin : zod.string().length(6).refine((data) => {
+        for(let i = 0 ; i < data.length ; i++){
+            if(!(Number(data.charAt(i)) >= 0 && Number(data.charAt(i)) <= 9)){
+                return false;
+            }
+        }
+        return true;
+    })
+}).refine((data) => {
+    if(data.tpin == data.confirmTpin){
+        return true;
+    }
+    return false
+},{message : "Tpin and confirm Tpin should match."})
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
@@ -143,4 +187,6 @@ export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;
 export type EditAddressFormat = zod.infer<typeof EditAddressSchema>;
 export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>;
 export type ChangePhoneFormat = zod.infer<typeof ChangePhoneSchema >
-export type ReportProblemFormat = zod.infer<typeof ReportProblemSchema>
+export type ReportProblemFormat = zod.infer<typeof ReportProblemSchema>;
+export type newOtpFormat = zod.infer<typeof newOtpSchema>
+export type changeAddTpinFormat = zod.infer<typeof changeAddTpinSchema>
