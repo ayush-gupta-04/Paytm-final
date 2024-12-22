@@ -55,7 +55,7 @@ export const addMoneySchema = zod.object({
     }),
     bankName : zod.string({required_error : "This field is required"}).min(1,{message : "Bank cannot be Empty"}),
 })
-export const p2pSchema = zod.object({
+export const p2pTransferToPhoneSchema = zod.object({
     amount : zod.string().min(1,{message : "This Field is required"}).refine((money) => {
         for(var i = 0 ; i < money.length ; i++){
             if(!(Number(money.charAt(i)) >= 0 && Number(money.charAt(i)) <= 9)){
@@ -80,6 +80,33 @@ export const p2pSchema = zod.object({
     },{message : "Phone number should only contain numbers."}),
     tpin : zod.string().length(6,{message : "Tpin must be of length 6!"})
 })
+
+
+export const p2pTransferToUpiSchema = zod.object({
+    amount : zod.string().min(1,{message : "This Field is required"}).refine((money) => {
+        for(var i = 0 ; i < money.length ; i++){
+            if(!(Number(money.charAt(i)) >= 0 && Number(money.charAt(i)) <= 9)){
+                return false;
+            }
+            return true;
+        }
+    },{message : "Amount must be a number"}).refine((data) => {
+        if(Number(data.charAt(0)) == 0){
+            return false;
+        }
+        return true;
+    }),
+    upi : zod.string().max(20,{message : "UPI id cannot be more than 20"}).refine((data) => {
+        let regex = /^[a-zA-Z0-9]+[@]paytm$/;
+        if(data.match(regex)){
+            return true;
+        }
+        return false
+    },{message : "upi should end with @paytm",}),
+    tpin : zod.string().length(6,{message : "Tpin must be of length 6!"})
+})
+
+
 
 export const AddUpiSchema = zod.object({
     upi : zod.string().max(20,{message : "UPI id cannot be more than 20"}).refine((data) => {
@@ -217,13 +244,26 @@ export const amountSchema = zod.object({
     }),
 })
 
+
+
+export const UpiSchema = zod.object({
+    upi : zod.string().max(20,{message : "UPI id cannot be more than 20"}).refine((data) => {
+        let regex = /^[a-zA-Z0-9]+[@]paytm$/;
+        if(data.match(regex)){
+            return true;
+        }
+        return false
+    },{message : "upi should end with @paytm",})
+})
+
+
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
 export type emailFormat = zod.infer<typeof emailSchema>;
 export type changePassFormat = zod.infer<typeof changePassSchema>;
 export type addMoneyFormat = zod.infer<typeof addMoneySchema>;
-export type p2pFormat = zod.infer<typeof p2pSchema>;
+export type p2pTransferToPhoneFormat = zod.infer<typeof p2pTransferToPhoneSchema>;
 export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;
 export type EditAddressFormat = zod.infer<typeof EditAddressSchema>;
 export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>;
@@ -233,3 +273,5 @@ export type newOtpFormat = zod.infer<typeof newOtpSchema>
 export type changeAddTpinFormat = zod.infer<typeof changeAddTpinSchema>;
 export type amountFormat = zod.infer<typeof amountSchema>;
 export type tpinFormat = zod.infer<typeof tpinSchema>;
+export type UpiFormat = zod.infer<typeof UpiSchema>;
+export type p2pTransferToUpiFormat = zod.infer<typeof p2pTransferToUpiSchema>;

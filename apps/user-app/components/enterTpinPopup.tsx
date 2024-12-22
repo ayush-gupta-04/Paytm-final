@@ -8,8 +8,8 @@ import BackIcon from "./backIcon";
 import Error from "@repo/ui/error";
 import Button1 from "./button";
 import { tpinFormat, tpinSchema } from "@repo/schema/zod";
-import { transferToPhoneAtom } from "@paytm-repo/store/atom";
-import { p2pTransferToPhone } from "../app/action/p2pTransferToPhoneUpi";
+import { transferToPhoneAtom, transferToUpiAtom } from "@paytm-repo/store/atom";
+import { p2pTransferToPhone, p2pTransferToUpi } from "../app/action/p2pTransferToPhoneUpi";
 import Loader from "./loader";
 type BackendResponse = {
     success : boolean| null,
@@ -23,12 +23,12 @@ export default function EnterTPINpopup({onSuccess,onBack,setStep,step} : {onSucc
         message : "",
     })
     const[loading,setLoading] = useState(false)
-    const[transferToPhone,setTransferToPhone] = useRecoilState(transferToPhoneAtom);
+    const[transferToUpi,setTransferToUpi] = useRecoilState(transferToUpiAtom);
     const {register,handleSubmit,formState : {errors}} = useForm<tpinFormat>({resolver : zodResolver(tpinSchema)});
     async function onFormSubmit(data : tpinFormat){
         setResponse({success : null,message : ""})
         setLoading(true);
-        const res = await p2pTransferToPhone({phone : transferToPhone?.phone || "" , amount : transferToPhone?.amount || "" , tpin : data.tpin1 + data.tpin2 + data.tpin3 + data.tpin4 + data.tpin5 + data.tpin6}) as BackendResponse;
+        const res = await p2pTransferToUpi({upi : transferToUpi?.upi || "" , amount : transferToUpi?.amount || "" , tpin : data.tpin1 + data.tpin2 + data.tpin3 + data.tpin4 + data.tpin5 + data.tpin6}) as BackendResponse;
         setResponse(res);
         setLoading(false);
         if(res.success){
@@ -57,7 +57,7 @@ export default function EnterTPINpopup({onSuccess,onBack,setStep,step} : {onSucc
                     <Error message={response.message} success = {response.success}></Error>
                 </div>
                 <div className="flex flex-row gap-2">
-                    <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {setResponse({success : null,message : ""});setStep(null);setTransferToPhone(null);e.stopPropagation()}}>Cancel</div>
+                    <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {setResponse({success : null,message : ""});setStep(null);setTransferToUpi(null);e.stopPropagation()}}>Cancel</div>
                     <Button1 loading = {loading} text = {"Pay now"}></Button1>
                 </div>
             </form>

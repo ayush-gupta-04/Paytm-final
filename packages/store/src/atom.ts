@@ -101,3 +101,7 @@ export const transferToPhoneAtom = atom<{phone : string | null,amount : string |
     key : "tophone",
     default : null
 })
+export const transferToUpiAtom = atom<{upi : string | null,amount : string | null} | null>({
+    key : "toupi",
+    default : null
+})
