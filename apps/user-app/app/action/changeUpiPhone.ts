@@ -1,5 +1,5 @@
 'use server'
-import { AddUpiFormat, AddUpiSchema, ChangePhoneFormat, ChangePhoneSchema } from "@repo/schema/zod";
+import { AddUpiFormat, AddUpiSchema, phoneFormat, phoneSchema } from "@repo/schema/zod";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../../lib/auth";
 import prisma from "@paytm-repo/db/client";
@@ -63,8 +63,8 @@ export async function addUpiIdAction(data : AddUpiFormat){
 
 
 
-export async function changePhoneAction(data : ChangePhoneFormat){
-    const format = ChangePhoneSchema.safeParse(data);
+export async function changePhoneAction(data : phoneFormat){
+    const format = phoneSchema.safeParse(data);
     const session = await getServerSession(NEXT_AUTH);
     if(!session || !session.user){
         return{

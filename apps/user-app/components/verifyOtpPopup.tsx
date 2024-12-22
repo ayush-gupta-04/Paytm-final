@@ -27,7 +27,6 @@ export default function VerifyOtpPopup({onSuccess,onBack,step,setStep} : {onSucc
     const [changePasswordPopup,setChangePasswordPopup] = useRecoilState(changePasswordPopupAtom);
     const {register,handleSubmit,formState : {errors},reset} = useForm<newOtpFormat>({resolver : zodResolver(newOtpSchema)});
     async function onFormSubmit(data : newOtpFormat){
-        console.log(changePasswordPopup)
         setLoading(true);
         const res = await verifyingPassOtpForChangePass({otp : data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,otpToken : changePasswordPopup?.token || ""}) as BackendResponse;
         setResponse(res);

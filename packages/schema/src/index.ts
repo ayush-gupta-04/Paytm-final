@@ -78,7 +78,7 @@ export const p2pSchema = zod.object({
         }
         return true;
     },{message : "Phone number should only contain numbers."}),
-    password : zod.string().min(8,{message : "Password should be min of 8 characters"})
+    tpin : zod.string().length(6,{message : "Tpin must be of length 6!"})
 })
 
 export const AddUpiSchema = zod.object({
@@ -117,7 +117,7 @@ export const EditDetailsSchema = zod.object({
     gender : zod.nativeEnum(Gender,{message : "Gender cannot be Empty"})
 })
 
-export const ChangePhoneSchema = zod.object({
+export const phoneSchema = zod.object({
     phone : zod.string().length(10,{message :"Phone should be of length 10 only"}).refine((data)=>{
         const regex = /^\d{10}$/;
         if(data.match(regex)){
@@ -132,6 +132,27 @@ export const ReportProblemSchema = zod.object({
     subject : zod.string().min(1,{message : "Subject cannot be empty"}),
     body : zod.string().min(1,{message : "body cannot be empty"})
 })
+export const tpinSchema = zod.object({
+    tpin1 : zod.string().length(1).refine((data) => {
+        return (Number(data) >= 0 && Number(data) <= 9)
+    }),
+    tpin2 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    tpin3 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    tpin4 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    tpin5 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    }),
+    tpin6 : zod.string().length(1).refine((data) => {
+        return (Number(data) >=0 && Number(data) <= 9)
+    })
+})
+
 export const newOtpSchema = zod.object({
     otp1 : zod.string().length(1).refine((data) => {
         return (Number(data) >= 0 && Number(data) <= 9)
@@ -152,6 +173,8 @@ export const newOtpSchema = zod.object({
         return (Number(data) >=0 && Number(data) <= 9)
     })
 })
+
+
 
 export const changeAddTpinSchema = zod.object({
     tpin : zod.string().length(6).refine((data) => {
@@ -176,6 +199,24 @@ export const changeAddTpinSchema = zod.object({
     }
     return false
 },{message : "Tpin and confirm Tpin should match."})
+
+
+export const amountSchema = zod.object({
+    amount : zod.string().min(1,{message : "This Field is required"}).refine((money) => {
+        for(var i = 0 ; i < money.length ; i++){
+            if(!(Number(money.charAt(i)) >= 0 && Number(money.charAt(i)) <= 9)){
+                return false;
+            }
+            return true;
+        }
+    },{message : "Amount must be a number"}).refine((data) => {
+        if(Number(data.charAt(0)) == 0){
+            return false;
+        }
+        return true;
+    }),
+})
+
 export type SignupFormat = zod.infer<typeof signupSchema>;
 export type SigninFormat = zod.infer<typeof signinSchema>;
 export type otpFormat = zod.infer<typeof otpSchema>;
@@ -186,7 +227,9 @@ export type p2pFormat = zod.infer<typeof p2pSchema>;
 export type AddUpiFormat = zod.infer<typeof AddUpiSchema>;
 export type EditAddressFormat = zod.infer<typeof EditAddressSchema>;
 export type EditDetailsFormat = zod.infer<typeof EditDetailsSchema>;
-export type ChangePhoneFormat = zod.infer<typeof ChangePhoneSchema >
+export type phoneFormat = zod.infer<typeof phoneSchema >
 export type ReportProblemFormat = zod.infer<typeof ReportProblemSchema>;
 export type newOtpFormat = zod.infer<typeof newOtpSchema>
-export type changeAddTpinFormat = zod.infer<typeof changeAddTpinSchema>
+export type changeAddTpinFormat = zod.infer<typeof changeAddTpinSchema>;
+export type amountFormat = zod.infer<typeof amountSchema>;
+export type tpinFormat = zod.infer<typeof tpinSchema>;

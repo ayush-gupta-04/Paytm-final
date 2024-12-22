@@ -3,7 +3,7 @@ import { SidebarItem } from "../../components/SideBar";
 
 export default function MainAppLayout({children} : {children : React.ReactNode}){
     return(
-        <div>
+        <div className="">
             <AppBarClient></AppBarClient>
             <div className="flex overflow-auto">
                 <div className="w-72 bg-[#ECF5FC] min-h-screen pb-10 px-6 flex flex-col gap-2 justify-center">

@@ -96,3 +96,8 @@ export const changePasswordPopupAtom = atom<{email : string | null,token : strin
     key : "changePasswordPopup",
     default : null
 })
+
+export const transferToPhoneAtom = atom<{phone : string | null,amount : string | null} | null>({
+    key : "tophone",
+    default : null
+})

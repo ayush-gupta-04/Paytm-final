@@ -47,23 +47,23 @@ type ProfileProps = {
 function Profile ({onSignout,name,email,image} : ProfileProps) {
     const[hide, setHide] = useState(true);
     return(
-        <div className="flex flex-row gap-4 items-center">
+        <div className="flex flex-row gap-4 items-center cursor-pointer" onClick={(e) => {setHide(!hide);e.stopPropagation()}}>
             <div className={`size-10 rounded-full ${image?"":"bg-gray-300"} flex justify-center items-center`} >
-            <img src= {image || "./profile.svg"} className={`${image?"size-10 rounded-full hover:cursor-pointer":"size-7"}`}/>
-            <div className={`absolute top-14 right-8 w-56 h-fit ${hide?"scale-0 origin-top-right":"scale-100 origin-top-right"} cursor-pointer duration-150 transition-transform`}>
-            <div className="h-16 flex flex-col justify-center items-center bg-white rounded-t-lg  border-t border-l border-r border-slate-300 hover:bg-slate-100 px-2">
-                <div className="text-lg font-semibold">{name}</div>
-                <div className="text-gray-700 font-medium">{email}</div>
-            </div>
-                <div className="h-12 flex justify-center items-center bg-white border-b border-l border-r border-slate-300 rounded-b-lg hover:bg-slate-100 px-2"
-                onClick={onSignout}>
-                <div className="flex flex-row gap-1 text-red-500">
-                    <img src="./signout.svg" className="size-6 self-center"/>
-                    <div className="text-lg font-medium text-red-500">Signout</div>  
+                <img src= {image || "./profile.svg"} className={`${image?"size-10 rounded-full hover:cursor-pointer":"size-7"}`} />
+                <div className={`fixed top-14 z-10 right-8 w-56 h-fit ${hide?"scale-0 origin-top-right":"scale-100 origin-top-right"} cursor-pointer duration-150 transition-all`}>
+                <div className="h-16 flex flex-col justify-center items-center bg-white rounded-t-lg  border-t border-l border-r border-slate-300 hover:bg-slate-100 px-2">
+                    <div className="text-lg font-semibold">{name}</div>
+                    <div className="text-gray-700 font-medium">{email}</div>
                 </div>
+                    <div className="h-12 flex justify-center items-center bg-white border-b border-l border-r border-slate-300 rounded-b-lg hover:bg-slate-100 px-2"
+                    onClick={onSignout}>
+                    <div className="flex flex-row gap-1 text-red-500">
+                        <img src="./signout.svg" className="size-6 self-center"/>
+                        <div className="text-lg font-medium text-red-500">Signout</div>  
+                    </div>
+                    </div>
                 </div>
             </div>
-        </div>
             <div onClick={()=>{setHide(!hide)}} className="hover:cursor-pointer">
                 {name}
             </div>

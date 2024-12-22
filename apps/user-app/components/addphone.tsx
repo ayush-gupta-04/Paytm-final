@@ -5,7 +5,7 @@ import Success from "@repo/ui/success";
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import {changePhoneAction} from "../app/action/changeUpiPhone";
-import { ChangePhoneFormat, ChangePhoneSchema } from "@repo/schema/zod";
+import {phoneFormat, phoneSchema } from "@repo/schema/zod";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { phoneAtom } from "@paytm-repo/store/atom";
 import Button1 from "./button";
@@ -28,8 +28,8 @@ export default function AddPhone({serverPhone} : {serverPhone : string | null}){
         },[phone])
         const[hide,setHide] = useState(true);
         const[loading,setLoading] = useState(false);
-        const {register,handleSubmit,formState : {errors},reset} = useForm<ChangePhoneFormat>({resolver : zodResolver(ChangePhoneSchema),defaultValues : {phone : phone || ""}}); 
-        async function onSubmit(data : ChangePhoneFormat){
+        const {register,handleSubmit,formState : {errors},reset} = useForm<phoneFormat>({resolver : zodResolver(phoneSchema),defaultValues : {phone : phone || ""}}); 
+        async function onSubmit(data : phoneFormat){
             setLoading(true);
             const res = await changePhoneAction(data) as BackendResponse;
             setLoading(false);

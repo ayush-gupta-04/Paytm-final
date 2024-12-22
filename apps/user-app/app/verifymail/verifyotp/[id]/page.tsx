@@ -45,7 +45,7 @@ export default function EmailVerifyPage({params} : any){
     return(
         <div className="w-1/3 bg-white px-8 py-8 text-center flex flex-col gap-4 rounded-lg">
             <div className="flex  flex-row justify-between" >
-                <Image src={"/back.svg"} alt={""} className="size-6 cursor-pointer self-center" onClick={() => {router.back()}} />
+                <Image src={"/back.svg"} alt={""} height = {10} width = {10} className="size-6 cursor-pointer self-center" onClick={() => {router.back()}} />
             <header className="text-4xl  font-serif font-bold text-slate-800 mb-4  mt-2">
                 Enter OTP
             </header>
