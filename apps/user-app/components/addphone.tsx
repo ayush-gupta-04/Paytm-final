@@ -39,8 +39,8 @@ export default function AddPhone({serverPhone} : {serverPhone : string | null}){
             }
         }
     return(
-        <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100" onClick={() => {setHide(false)}}>
-            <div className="text-xl hover:cursor-pointer hover:font-medium">Change Phone</div>
+        <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100 hover:cursor-pointer" onClick={() => {setHide(false)}}>
+            <div className="text-xl ">Change Phone</div>
             <div className="text-[#8A8A8A]">add a phone number to make a transfer and also to ensure account recovery </div>
             <BackgroundSupporter hide = {hide}></BackgroundSupporter>
             <div className={`bg-white shadow-slate-800 shadow-2xl w-1/3 px-4 py-4 fixed z-20 top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 rounded-lg duration-300 ${hide?"scale-90 opacity-0 pointer-events-none":"scale-100 opacity-100"} `} onClick={(e) => {e.stopPropagation()}}>

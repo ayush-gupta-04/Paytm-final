@@ -28,7 +28,7 @@ export default function UpiHeading({initialUpi} : {initialUpi : string | null}){
         
     }
     return(
-        <div className="w-full h-10 shadow-sm bg-white rounded-md flex flex-row justify-between">
+        <div className="w-full py-1 shadow-sm bg-white rounded-md flex flex-row justify-between">
             <div className="self-center px-3 font-semibold">{upi?"Your UPI ID":"Add a new UPI ID now"}</div>
             <div className="self-center px-3 flex flex-row gap-4">
             <div className="text-green-600 font-semibold" ref={divRef}>{upi}</div>

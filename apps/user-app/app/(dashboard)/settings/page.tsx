@@ -97,7 +97,7 @@ async function getDetails() {
 export default async function SettingsPage(){
     const details = await getDetails();
     return (
-        <div className="min-h-screen w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative">
+        <div className="h-[770px] overflow-auto w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative">
             <UpiHeading initialUpi = {details.upi}></UpiHeading>
             <div className="flex flex-col gap-3">
                 <div className="w-fit h-fit px-3 py-2 bg-[#0560FD] text-white rounded-lg">

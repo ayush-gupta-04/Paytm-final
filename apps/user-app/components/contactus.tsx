@@ -11,8 +11,8 @@ import Button1 from "./button";
 export default function ContactUs(){
     const[hide,setHide] = useState(true);
     return(
-        <div className=" px-4 py-5 flex flex-col border-b-2 hover:bg-gray-100" onClick={() => {setHide(false)}}>
-            <div className="text-xl hover:cursor-pointer hover:font-medium">Contact us</div>
+        <div className=" px-4 py-5 flex flex-col border-b-2 hover:bg-gray-100  hover:cursor-pointer " onClick={() => {setHide(false)}}>
+            <div className="text-xl">Contact us</div>
             <ContactUsCard hide = {hide} setHide = {setHide}></ContactUsCard>
         </div>
     )

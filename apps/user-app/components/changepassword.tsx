@@ -33,8 +33,8 @@ export default function ChangePasswordElement(){
         }
     },[step])
     return(
-        <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100" onClick={() => {setStep('email')}}>
-            <div className="text-xl hover:cursor-pointer hover:font-medium">Change Password</div>
+        <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100 hover:cursor-pointer" onClick={() => {setStep('email')}}>
+            <div className="text-xl">Change Password</div>
             <div className="text-[#8A8A8A]">change old password with a new one</div>
             <BackgroundSupporter hide = {step == null}></BackgroundSupporter>
             {step == "email" && <SendEmailPopup onSuccess = {handleNextStep} onBack = {handlePreviousStep} step = {step} setStep={setStep}></SendEmailPopup>}

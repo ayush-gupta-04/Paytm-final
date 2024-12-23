@@ -40,8 +40,8 @@ export default function AddUpiID({upi} : {upi : string | null }){
     }
     return(
         <div>
-            <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100" onClick={() => {setHide(!hide)}}>
-                <div className="text-xl hover:cursor-pointer hover:font-medium">Change UPI ID</div>
+            <div className="bg-white px-4 py-2 flex flex-col rounded-t-lg border-b-2 hover:bg-gray-100 hover:cursor-pointer" onClick={() => {setHide(!hide)}}>
+                <div className="text-xl ">Change UPI ID</div>
                 <div className="text-[#8A8A8A]">add a upi id to make transaction more smooth</div>
             </div>
             <BackgroundSupporter hide = {hide}></BackgroundSupporter>

@@ -3,10 +3,10 @@ import { SidebarItem } from "../../components/SideBar";
 
 export default function MainAppLayout({children} : {children : React.ReactNode}){
     return(
-        <div className="">
+        <div className="h-screen">
             <AppBarClient></AppBarClient>
-            <div className="flex overflow-auto">
-                <div className="w-72 bg-[#ECF5FC] min-h-screen pb-10 px-6 flex flex-col gap-2 justify-center">
+            <div className="flex">
+                <div className="w-72 bg-[#ECF5FC] pb-10 px-6 flex flex-col gap-2 justify-center h-[770px]">
                     <SidebarItem href={"/dashboard"}  icon={<HomeIcon />} title="Home" ></SidebarItem>
                     <SidebarItem href={"/wallet"}  icon={<WalletIcon />} title="Wallet"></SidebarItem>
                     <SidebarItem href={"/transfer"}  icon={<TransferIcon />} title="Transfer"></SidebarItem>

@@ -12,7 +12,7 @@ type AppBarProps = {
 }
 export default function AppBar({onSignin,onSignout,userData,settings} : AppBarProps){
     return(
-        <div className="flex flex-row justify-between px-8 py-2 shadow-md bg-[#ECF5FC]">
+        <div className="flex flex-row justify-between px-8 py-[7px] shadow-lg bg-[#ECF5FC]">
             <div className="">
                 <img src="./paytm.png" className="h-10 w-64"/>
             </div>
@@ -50,7 +50,7 @@ function Profile ({onSignout,name,email,image} : ProfileProps) {
         <div className="flex flex-row gap-4 items-center cursor-pointer" onClick={(e) => {setHide(!hide);e.stopPropagation()}}>
             <div className={`size-10 rounded-full ${image?"":"bg-gray-300"} flex justify-center items-center`} >
                 <img src= {image || "./profile.svg"} className={`${image?"size-10 rounded-full hover:cursor-pointer":"size-7"}`} />
-                <div className={`fixed top-14 z-10 right-8 w-56 h-fit ${hide?"scale-0 origin-top-right":"scale-100 origin-top-right"} cursor-pointer duration-150 transition-all`}>
+                <div className={`fixed top-14 z-10 shadow-xl right-8 w-56 h-fit ${hide?"scale-0 origin-top-right":"scale-100 origin-top-right"} cursor-pointer duration-150 transition-all`}>
                 <div className="h-16 flex flex-col justify-center items-center bg-white rounded-t-lg  border-t border-l border-r border-slate-300 hover:bg-slate-100 px-2">
                     <div className="text-lg font-semibold">{name}</div>
                     <div className="text-gray-700 font-medium">{email}</div>

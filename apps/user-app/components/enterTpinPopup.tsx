@@ -8,8 +8,8 @@ import BackIcon from "./backIcon";
 import Error from "@repo/ui/error";
 import Button1 from "./button";
 import { tpinFormat, tpinSchema } from "@repo/schema/zod";
-import { transferToPhoneAtom, transferToUpiAtom } from "@paytm-repo/store/atom";
-import { p2pTransferToPhone, p2pTransferToUpi } from "../app/action/p2pTransferToPhoneUpi";
+import { transferToUpiAtom } from "@paytm-repo/store/atom";
+import { p2pTransferToUpi } from "../app/action/p2pTransferToPhoneUpi";
 import Loader from "./loader";
 type BackendResponse = {
     success : boolean| null,

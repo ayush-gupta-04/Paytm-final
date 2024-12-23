@@ -43,7 +43,7 @@ export default async function TransactionPage(){
     const initialUpi = await getUpi();
     const balanceData = await getBalance();
     return(
-        <div className="min-h-screen w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC]">
+        <div className="h-[770px] overflow-auto w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC]">
             <UpiHeading initialUpi={initialUpi}></UpiHeading>
             <Balance amount={balanceData.amount} locked={balanceData.locked}></Balance>
             <AddMoney></AddMoney>

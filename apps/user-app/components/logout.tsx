@@ -1,8 +1,8 @@
 export default function Logout(){
     return(
-        <div className="bg-white px-4 py-5 flex flex-col rounded-b-lg hover:bg-gray-100">
+        <div className="bg-white px-4 py-5 flex flex-col rounded-b-lg hover:bg-gray-100 hover:cursor-pointer ">
             <div className="text-xl flex flex-row justify-between">
-                <div  className="text-red-600 hover:cursor-pointer hover:font-medium">Logout</div>
+                <div  className="text-red-600 ">Logout</div>
                 <div className="text-red-600">{LogoutIcon()}</div>
             </div>
         </div>

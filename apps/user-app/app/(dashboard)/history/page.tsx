@@ -5,6 +5,7 @@ import prisma from "@paytm-repo/db/client";
 import P2PTransactions from "../../../components/p2pTransactions";
 import TransactionsWithFilter from "../../../components/transactions";
 import { tree } from "next/dist/build/templates/app-page";
+import UpiHeading from "../../../components/upiheading";
 type Transactions = {
     onRamp : boolean,
     send : boolean,
@@ -141,21 +142,36 @@ async function getP2PTransactions(){
 
 
 
-
+async function getUpi(){
+    const session = await getServerSession(NEXT_AUTH);
+    if(!session){
+        return null;
+    }
+    try {
+        const data = await prisma.user.findFirst({
+            where : {
+                id : session.user.id
+            },select : {
+                upi : true
+            }
+        })
+        if(!data){
+            return null;
+        }
+        return data.upi;
+    } catch (error) {
+        return null;
+    }
+}
 export default async function HistoryOfTransaction(){
     const onRampTnx = await getOnRampTransactions();
     const p2pTnx = await getP2PTransactions();
     const transactions = [...onRampTnx,...p2pTnx].sort((a,b) => a.timeInSeconds - b.timeInSeconds);
+    const initialUpi = await getUpi();
     
     return (
-        <div className="min-h-screen w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC]"> 
-            <div className="w-full h-10 shadow-sm bg-white rounded-md flex flex-row justify-between">
-                <div className="self-center px-3 font-semibold">Your UPI ID</div>
-                <div className="self-center px-3 flex flex-row gap-4">
-                    <div className="text-green-600 font-semibold">7970566566@paytm</div>
-                    <CopyIcon></CopyIcon>
-                </div>
-            </div>
+        <div className="h-full w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative overflow-auto">
+            <UpiHeading initialUpi={initialUpi}></UpiHeading>
             <div className="flex flex-col gap-3 h-full">
                 <div className="w-fit h-fit px-3 py-2 bg-[#0560FD] text-white rounded-lg">
                     Transaction history

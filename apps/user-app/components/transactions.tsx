@@ -36,15 +36,16 @@ type p2pTnx = {
 
 type CombinedTransactions = p2pTnx | onRampTnx
 function isTypeP2P(item : p2pTnx | onRampTnx) : item is p2pTnx{
-    return (item as p2pTnx).p2p 
+    return (item as p2pTnx).p2p
 }
 function isTypeOnRamp(item : p2pTnx | onRampTnx) : item is onRampTnx{
-    return (item as onRampTnx).onRamp 
+    return (item as onRampTnx).onRamp
 }
 
 
 export default function TransactionsWithFilter({transactions} : {transactions : CombinedTransactions[]}){
     const[hide,setHide] = useState(true);
+    const[showTnx,setShowTnx] = useState(false);
     const[transactionsState,setTransactionState] = useRecoilState(transactionAtom)
     useEffect(() => {
         //if no filter is open || initial render --> then set transactionsState to the server fetched values
@@ -53,13 +54,14 @@ export default function TransactionsWithFilter({transactions} : {transactions : 
         }
     },[hide])
     return(
-        <div className={`w-full duration-300 flex flex-row justify-between h-full`}>
-            <div className={`${hide?"w-full":"w-3/4 mr-4"} duration-300 transition-all bg-white rounded-lg py-4 px-4 overflow-auto`}>
-                <div className="py-2 flex justify-between items-center border-b-2">
+        <div className={`w-full duration-300 flex flex-row justify-between relative h-[625px]`}>
+            <div className={`${hide?"w-full":"w-3/4 mr-4"} duration-300 transition-all rounded-lg py-4 px-4 h-full bg-white shadow-xl`}>
+                <div className="py-2 flex justify-between items-center border-b-2 z-30 sticky">
                     <div className="text-xl font-medium"> Transactions</div>
                     <div className="bg-[#07CBFD] mx-4 px-6 py-1 rounded-lg" onClick={() => {setHide(!hide)}}> filter</div>
                 </div>
-                <div className="py-2">
+                <div className="my-2 h-[530px] overflow-auto">
+                <BackgroundSupporter hide = {!showTnx}></BackgroundSupporter>
                     {transactionsState && transactionsState.map((tnx,id) => {
                         if(isTypeOnRamp(tnx)){
                             return (
@@ -76,7 +78,7 @@ export default function TransactionsWithFilter({transactions} : {transactions : 
                             )
                         }else if (isTypeP2P(tnx)){
                             return(
-                                <div className="w-full min-h-fit flex flex-col px-3 py-2 hover:bg-slate-100" key={id+""}>
+                                <div className="w-full min-h-fit flex flex-col px-3 py-2 hover:bg-slate-100" key={id+""} onClick={() => {setShowTnx(true)}}>
                                     <div className="flex flex-row justify-between">
                                         <div className="font-medium">{tnx.send?`Send to : ${tnx.receiver.name}`:`Received from : ${tnx.sender.name}`}</div>
                                     <div className={`text-lg font-medium`}>{tnx.send?`- ${tnx.amount/100}`:`+ ${tnx.amount/100}`}</div>
@@ -85,6 +87,7 @@ export default function TransactionsWithFilter({transactions} : {transactions : 
                                         <div className="text-slate-600">{tnx.time}</div>
                                         <div className="text-green-700">{tnx.send?`sent successfully`:`received successfully`}</div>
                                     </div>
+                                    {showTnx && <P2PTnxDetails amount = {tnx.amount/100} sender = {tnx.sender} receiver = {tnx.receiver} send = {tnx.send} tnxId = {tnx.transactionId} time = {tnx.time} show = {showTnx}></P2PTnxDetails>}
                                 </div>
                             )
                         }
@@ -96,12 +99,32 @@ export default function TransactionsWithFilter({transactions} : {transactions : 
     )
 }
 
+function BackgroundSupporter({hide} : {hide : boolean}){
+    return(
+        <div className={`w-screen fixed z-10 top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 h-full duration-300 ${hide?"opacity-0 pointer-events-none":"opacity-100 backdrop-brightness-50"}`} onClick={(e) => {e.stopPropagation()}}>  
+        </div>
+    )
+}
+
+
 function FilterIcon(){
     return(
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
 </svg>
 
+    )
+}
+
+
+
+
+function P2PTnxDetails({amount,sender,receiver,send,tnxId,time,show} : {amount : number,sender : {name : string,phone : string|null,upi : string | null},receiver : {name : string,phone : string|null,upi : string | null},send : boolean,tnxId : string,time : string,show : boolean}){
+    return(
+        <div className={`fixed z-20 transition-all top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-fit bg-white px-4 py-4`}>
+            <div className="text-3xl font-medium text-center bg-red-200 py-2 border border-b-2">Payment Details</div>
+            <div></div>
+        </div>
     )
 }
 
