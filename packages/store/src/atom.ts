@@ -61,6 +61,7 @@ type onRampTnx = {
     status: string;
     provider: string;
     timeInSeconds: number;
+    transactionId: string;
 } 
 
 type p2pTnx = {
