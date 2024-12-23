@@ -45,7 +45,7 @@ function isTypeOnRamp(item : p2pTnx | onRampTnx) : item is onRampTnx{
 
 export default function RecentTransactions({transactions} : {transactions : CombinedTransactions[]}){
     return(
-            <div className={`w-full duration-300 transition-all bg-white rounded-lg py-4 px-4 min-h-[625px]`}>
+            <div className={`w-full duration-300 transition-all bg-white rounded-lg py-4 px-4 min-h-[625px] shadow-xl`}>
                 <div className="text-xl font-medium py-2 border-b-2"> Transactions</div>
                 <div className=" h-[540px] overflow-auto ">
                     {transactions.map((tnx,id) => {

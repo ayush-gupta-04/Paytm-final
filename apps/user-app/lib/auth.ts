@@ -58,12 +58,10 @@ export const NEXT_AUTH = {
     secret : process.env.NEXTAUTH_SECRET,
     callbacks : {
         session : ({session,token} : any) => {
-            console.log(session)
             session.user.id = token.sub;
             return session;
         },
         signIn : async ({user,account} : any) => {
-            console.log(user);
             if(account.provider == "google"){
                 const existingUser = await prisma.user.findFirst({
                     where : {
