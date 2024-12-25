@@ -155,7 +155,7 @@ export default async function DashBoard(){
     const p2pTnx = await getP2PTransactions();
     const transactions = [...onRampTnx,...p2pTnx].sort((a,b) => a.timeInSeconds - b.timeInSeconds);
     return(
-        <div className="w-full h-[770px] flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative overflow-auto">
+        <div className="w-full h-[770px] flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative overflow-auto" style={{scrollbarWidth : "thin"}}>
             <UpiHeading initialUpi={initialUpi}></UpiHeading>
             <div className="flex flex-row gap-32 justify-center">
                 <AddMoneyToWallet></AddMoneyToWallet>

@@ -47,7 +47,7 @@ export default function RecentTransactions({transactions} : {transactions : Comb
     return(
             <div className={`w-full duration-300 transition-all bg-white rounded-lg py-4 px-4 min-h-[625px] shadow-xl`}>
                 <div className="text-xl font-medium py-2 border-b-2"> Transactions</div>
-                <div className=" h-[540px] overflow-auto ">
+                <div className=" h-[540px] overflow-auto " style={{scrollbarWidth : "thin"}}>
                     {transactions.map((tnx,id) => {
                         if(isTypeOnRamp(tnx)){
                             return (

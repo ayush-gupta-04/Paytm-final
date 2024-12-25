@@ -149,7 +149,7 @@ export default async function HistoryOfTransaction(){
     const initialUpi = await getUpi();
     
     return (
-        <div className="h-full w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative overflow-auto">
+        <div className="h-full w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative">
             <UpiHeading initialUpi={initialUpi}></UpiHeading>
             <div className="flex flex-col gap-3 h-full">
                 <div className="w-fit h-fit px-3 py-2 bg-[#0560FD] text-white rounded-lg">

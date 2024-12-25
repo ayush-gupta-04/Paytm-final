@@ -29,7 +29,7 @@ async function getUpi(){
 export default async function TransferPage(){
     const initialUpi = await getUpi();
     return(
-        <div className="w-full h-[770px] overflow-auto flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative">
+        <div className="w-full h-[770px] overflow-auto flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative" style={{scrollbarWidth : "thin"}}>
             <UpiHeading initialUpi={initialUpi}></UpiHeading>
             <div className="flex flex-row gap-32 justify-center">
                 <PayToPhone></PayToPhone>
