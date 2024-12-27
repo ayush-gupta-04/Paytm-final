@@ -4,8 +4,8 @@ export default function Home(){
   return (
     <>
       <RootLayout>
-        <AppBarClient></AppBarClient>
-        <div className="bg-gray-200 h-[770px] overflow-auto" style={{scrollbarWidth :"thin"}}>
+        <AppBarClient userId={null}></AppBarClient>
+        <div className="bg-[#f5f7fa] h-[770px] overflow-auto" style={{scrollbarWidth :"thin"}}>
           <div className="bg-red-400 w-full"><img src="./landing4.png" /></div>
           <div className="h-screen w-full flex flex-col justify-center items-center gap-8 font-bold">
             <div className="text-5xl">Paytm Payment Instruments</div>

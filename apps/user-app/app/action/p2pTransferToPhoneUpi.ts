@@ -143,7 +143,6 @@ export async function p2pTransferToPhone(data : {phone : string , amount : strin
 
 export async function p2pTransferToUpi(data : {upi : string , amount : string, tpin : string}){
     const format = p2pTransferToUpiSchema.safeParse(data);
-    console.log(data)
     if(format.success){
         const amount = Number(data.amount)*100;
         const session = await getServerSession(NEXT_AUTH);
@@ -156,7 +155,9 @@ export async function p2pTransferToUpi(data : {upi : string , amount : string, t
                     phone : true,
                     upi : true,
                     tpin : true,
-                    id : true
+                    id : true,
+                    firstname : true,
+                    lastname : true
                 }
             })
             if(FromUser && FromUser.tpin){
@@ -231,7 +232,16 @@ export async function p2pTransferToUpi(data : {upi : string , amount : string, t
                             if(result.success){
                                 return{
                                     success : true,
-                                    message : "Successfully Transfered!"
+                                    message : "Successfully Transfered!",
+                                    data : {
+                                        receiverId : toUser.id,
+                                        message : {
+                                            from : FromUser.firstname + " " + FromUser.lastname,
+                                            amount : data.amount,
+                                            phone : FromUser.upi?null:FromUser.phone,
+                                            upi : FromUser.upi?FromUser.upi:null,
+                                        }
+                                    }
                                 }
                             }
                         } catch (error) {

@@ -1,10 +1,16 @@
+import { getServerSession } from "next-auth";
 import AppBarClient from "../../components/AppBar";
 import { SidebarItem } from "../../components/SideBar";
+import { NEXT_AUTH } from "../../lib/auth";
+import NotificationPopup from "../../components/notification";
 
-export default function MainAppLayout({children} : {children : React.ReactNode}){
+
+
+export default async function MainAppLayout({children} : {children : React.ReactNode}){
+    const session = await getServerSession(NEXT_AUTH);
     return(
-        <div className="h-screen">
-            <AppBarClient></AppBarClient>
+        <div className="h-screen relative">
+            <AppBarClient userId = {session.user.id}></AppBarClient>
             <div className="flex">
                 <div className="w-72 bg-[#ECF5FC] pb-10 px-6 flex flex-col gap-2 justify-center h-[770px]">
                     <SidebarItem href={"/dashboard"}  icon={<HomeIcon />} title="Home" ></SidebarItem>
@@ -15,6 +21,7 @@ export default function MainAppLayout({children} : {children : React.ReactNode})
                 </div>
                 {children}
             </div>
+            <NotificationPopup></NotificationPopup>
         </div>
     )
 }

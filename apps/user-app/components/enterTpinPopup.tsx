@@ -3,17 +3,26 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import BackIcon from "./backIcon";
 import Error from "@repo/ui/error";
 import Button1 from "./button";
 import { tpinFormat, tpinSchema } from "@repo/schema/zod";
-import { transferToUpiAtom } from "@paytm-repo/store/atom";
+import { socketAtom, transferToUpiAtom } from "@paytm-repo/store/atom";
 import { p2pTransferToUpi } from "../app/action/p2pTransferToPhoneUpi";
 import Loader from "./loader";
 type BackendResponse = {
     success : boolean| null,
     message : string,
+    data : {
+        receiverId : string,
+        message : {
+            from : string,
+            amount : string,
+            phone : string | null,
+            upi : string | null,
+        }
+    } | null
 }
 
 
@@ -21,17 +30,20 @@ export default function EnterTPINpopup({onSuccess,onBack,setStep,step} : {onSucc
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : "",
+        data : null
     })
     const[loading,setLoading] = useState(false)
+    const socket = useRecoilValue(socketAtom);
     const[transferToUpi,setTransferToUpi] = useRecoilState(transferToUpiAtom);
     const {register,handleSubmit,formState : {errors}} = useForm<tpinFormat>({resolver : zodResolver(tpinSchema)});
     async function onFormSubmit(data : tpinFormat){
-        setResponse({success : null,message : ""})
+        setResponse({success : null,message : "",data : null})
         setLoading(true);
         const res = await p2pTransferToUpi({upi : transferToUpi?.upi || "" , amount : transferToUpi?.amount || "" , tpin : data.tpin1 + data.tpin2 + data.tpin3 + data.tpin4 + data.tpin5 + data.tpin6}) as BackendResponse;
         setResponse(res);
         setLoading(false);
         if(res.success){
+            socket?.send(JSON.stringify(res.data));
             onSuccess()
         }
     }
@@ -57,7 +69,7 @@ export default function EnterTPINpopup({onSuccess,onBack,setStep,step} : {onSucc
                     <Error message={response.message} success = {response.success}></Error>
                 </div>
                 <div className="flex flex-row gap-2">
-                    <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {setResponse({success : null,message : ""});setStep(null);setTransferToUpi(null);e.stopPropagation()}}>Cancel</div>
+                    <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {setResponse({success : null,message : "",data : null});setStep(null);setTransferToUpi(null);e.stopPropagation()}}>Cancel</div>
                     <Button1 loading = {loading} text = {"Pay now"}></Button1>
                 </div>
             </form>

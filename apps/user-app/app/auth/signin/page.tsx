@@ -1,14 +1,17 @@
 'use client'
 import { zodResolver } from "@hookform/resolvers/zod";
-import {SigninFormat, signinSchema } from "@repo/schema/zod";
+import {emailFormat, emailSchema, newOtpFormat, newOtpSchema, SigninFormat, signinSchema } from "@repo/schema/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import {  useState } from "react";
 import { useForm } from "react-hook-form";
 import { LoginUser } from "../../action/login";
 import Image from "next/image";
+import ForgotPassword from "../../../components/forgotPass";
+import VerifyEmail from "../../../components/emailVerification";
+import Button1 from "../../../components/button";
 type BackendResponse = {
     success : boolean | null,
     message : string,
@@ -18,6 +21,7 @@ type BackendResponse = {
 export default function SigninPage(){
     const router = useRouter();
     const[loading,setLoading] = useState(false);
+    const[step,setStep] = useState<string | null>(null);
     const[response,setResponse] = useState<BackendResponse>({
         message : '',
         success : null,
@@ -94,13 +98,13 @@ export default function SigninPage(){
                     <button className={`text-gray-600  font-medium  mb-2 text-sm ${loading?"":"hover:text-blue-600"}`}
                     type="button"
                     disabled = {loading}
-                    onClick={() => {router.push('/forgotpass/email')}}>
+                    onClick={() => {setStep('forgotpass')}}>
                         forgot password?
                     </button>
                     <button className={`text-gray-600  font-medium  mb-2 text-sm ${loading?"":"hover:text-blue-600"}`}
                     type="button"
                     disabled = {loading}
-                    onClick={() => {router.push('/verifymail/email')} }>
+                    onClick={() => {setStep('verifyEmail')}}>
                         email not verified?
                     </button>
                 </div>
@@ -108,10 +112,7 @@ export default function SigninPage(){
                     <Success message={response.message} success = {response.success}></Success>
                     <Error message={response.message} success = {response.success}></Error>
                 </div>
-                <button className = {`rounded-md text-white w-full py-3 ${loading?"bg-[#4E8FFF]":"bg-[#0560FD] hover:bg-[#0045BD]"}`}
-                disabled = {loading}>
-                    {loading?"Loading...":"Login"}
-                </button>
+                <Button1 loading = {loading} text = {"Login"}></Button1>
             </form>
             <div className="bg-gray-300 py-2 rounded-md flex justify-center gap-3 hover:bg-gray-400 hover:cursor-pointer"
             //the callback url will ensure to redirect after a successfull login from google
@@ -129,9 +130,12 @@ export default function SigninPage(){
                     Register
                 </div>
             </div>
-
+            {step == 'forgotpass' && <ForgotPassword setMainStep = {setStep}></ForgotPassword>}
+            {step == 'verifyEmail' && <VerifyEmail setMainStep = {setStep}></VerifyEmail>}
         </div>
     )
 }
+
+
 
 

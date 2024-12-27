@@ -1,16 +1,21 @@
 'use client'
-import {signupSchema , SignupFormat} from "@repo/schema/zod";
+import {signupSchema , SignupFormat, newOtpFormat, newOtpSchema} from "@repo/schema/zod";
 import {zodResolver} from "@hookform/resolvers/zod"
 import {useForm} from "react-hook-form"
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { CreateNewAccount } from "../../action/signup";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import { useRecoilState } from "recoil";
+import { changePasswordPopupAtom } from "@paytm-repo/store/atom";
+import { verifyingEmailOtp, verifyingPassOtpForChangePass } from "../../action/verify";
+import BackIcon from "../../../components/backIcon";
+import Button1 from "../../../components/button";
 
-type BackendResponse = {
+type TokenBackendResponse = {
     success : boolean | null,
     message : string,
     otpToken : string | null
@@ -20,25 +25,38 @@ type BackendResponse = {
 export default function SignupPage(){
     const router = useRouter();
     const[loading,setLoading] = useState(false)
-    const[response,setResponse] = useState<BackendResponse>({
+    const[step,setStep] = useState<string | null>(null)
+    const[response,setResponse] = useState<TokenBackendResponse>({
         message : '',
         success : null,
         otpToken : null
     });
-    const {register,handleSubmit,formState : { errors },resetField} = useForm<SignupFormat>({resolver : zodResolver(signupSchema)});
+    function handleNextStep(){
+        if(step == null){
+            setStep('otp')
+        }else if(step == 'otp'){
+            setStep(null);
+            setResponse({success : null,message : "",otpToken : null})
+        }
+    }
+    function handlePreviousStep(){
+        if(step == 'otp'){
+            setStep(null)
+        }
+    }
+    const {register,handleSubmit,formState : { errors },reset} = useForm<SignupFormat>({resolver : zodResolver(signupSchema)});
     async function signup(userdata : SignupFormat){
         setLoading(true);
-        const res = await CreateNewAccount(userdata) as BackendResponse;
-        console.log(res)
+        const res = await CreateNewAccount(userdata) as TokenBackendResponse;
+        if(res.success){
+            setTimeout(() => {
+                handleNextStep();
+            }, 1500);
+        }
         setResponse(res);
         setLoading(false);
-        resetField;
+        reset();
     }
-    // if(response.success && response.userId != null){
-    //     setTimeout(() => {
-    //         router.push(`/auth/emailotp/${response.userId}`)
-    //     }, 1000);
-    // }
     return (
         <div className="w-1/3 bg-white px-8 py-8 text-center flex flex-col gap-3 rounded-lg">
             <header className="text-5xl font-serif font-bold text-slate-800">
@@ -126,14 +144,6 @@ export default function SignupPage(){
                         Password
                     </label>
                 </div>
-                <div className="flex flex-row justify-between my-1">
-                    <div></div>
-                    <button className={`text-gray-600 hover:text-blue-600 font-semibold hover:cursor-pointer ${response.success?"":"hidden"}`}
-                    type="button"
-                    onClick={() => {router.push(`/verifymail/verifyotp/${response.otpToken}`)}} >
-                        Verify OTP
-                    </button>
-                </div>
                 <div className="mb-4">
                     <Success message={response.message} success = {response.success}></Success>
                     <Error message={response.message} success = {response.success}></Error>
@@ -159,7 +169,73 @@ export default function SignupPage(){
                     Login
                 </div>
             </div>
+            <BackgroundSupporter hide = {step == null}></BackgroundSupporter>
+            {step == 'otp' && <VerifyOtpPopup onSuccess = {handleNextStep} onBack = {handlePreviousStep} token = {response.otpToken} setStep={setStep}></VerifyOtpPopup>}
+        </div>
+    )
+}
 
+
+
+
+function BackgroundSupporter({hide} : {hide : boolean}){
+    return(
+        <div className={`w-screen z-10 fixed top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 h-full duration-300 ${hide?"opacity-0 pointer-events-none":"opacity-100 backdrop-brightness-50"}`} onClick={(e) => {e.stopPropagation()}}>  
+        </div>
+    )
+} 
+
+
+type BackendResponse = {
+    success : boolean| null,
+    message : string
+}
+
+function VerifyOtpPopup({onSuccess,onBack,setStep,token} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,token : string | null}){
+    const[response,setResponse] = useState<BackendResponse>({
+        success : null,
+        message : "",
+    })
+    const[loading,setLoading] = useState(false)
+    const {register,handleSubmit,formState : {errors}} = useForm<newOtpFormat>({resolver : zodResolver(newOtpSchema)});
+    async function onFormSubmit(data : newOtpFormat){
+        setLoading(true);
+        const res = await verifyingEmailOtp({otp : data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,otpToken : token || ""}) as BackendResponse;
+        setResponse(res);
+        setLoading(false);
+        if(res.success){
+            setTimeout(() => {
+                onSuccess()
+            }, 1500);
+        }
+    }
+    
+    return(
+        <div className="fixed z-20 top-1/2 left-1/2 transition-all -translate-x-1/2 -translate-y-1/2 w-1/3 bg-white shadow-black shadow-xl py-3 px-4 rounded-lg" onClick={(e) => {e.stopPropagation()}}>
+            <div className="border-b-2 py-2 px-2 text-xl font-medium flex justify-between">
+                <div>Enter OTP</div>
+                <div onClick={(e) => {onBack();e.stopPropagation()}} className="hover:text-blue-700 cursor-pointer">
+                    <BackIcon></BackIcon>
+                </div>
+            </div>
+            <form  onSubmit={handleSubmit(onFormSubmit)}  className="rounded-b-lg pt-4 flex flex-col gap-4">
+                <div className="flex flex-row justify-center gap-4">
+                    <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp1")}  maxLength={1} minLength={0}/>
+                    <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp2")} maxLength={1}/>
+                    <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp3")} maxLength={1}/>
+                    <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp4")} maxLength={1}/>
+                    <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp5")} maxLength={1}/>
+                    <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp6")} maxLength={1} />
+                </div>
+                <div>
+                    <Success message={response.message} success = {response.success}></Success>
+                    <Error message={response.message} success = {response.success}></Error>
+                </div>
+                <div className="flex flex-row gap-2">
+                    <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {setResponse({success : null,message : ""});setStep(null);e.stopPropagation()}}>Cancel</div>
+                    <Button1 loading = {loading} text = {"Verify OTP"}></Button1>
+                </div>
+            </form>
         </div>
     )
 }

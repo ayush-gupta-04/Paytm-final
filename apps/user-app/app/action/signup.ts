@@ -58,7 +58,6 @@ export async function CreateNewAccount(user : SignupFormat){
                             token : otpToken
                         }
                     })
-                    
                     return otpTable 
                 })
         

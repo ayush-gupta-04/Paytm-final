@@ -12,6 +12,7 @@ import Success from "@repo/ui/success";
 import Error from "@repo/ui/error";
 import Button1 from "./button";
 import { verifyingPassOtpForChangePass } from "../app/action/verify";
+import Loader from "./loader";
 
 type BackendResponse = {
     success : boolean| null,
@@ -56,6 +57,7 @@ export default function VerifyOtpPopup({onSuccess,onBack,step,setStep} : {onSucc
                     <input type="text" className="h-12 w-12 border border-black rounded-lg text-xl text-center focus:outline-blue-600 transition-all focus:scale-105" {...register("otp6")} maxLength={1} />
                 </div>
                 <div>
+                {loading && <div className="py-2 transition-all scale-75"><Loader></Loader></div>}
                     <Success message={response.message} success = {response.success}></Success>
                     <Error message={response.message} success = {response.success}></Error>
                 </div>

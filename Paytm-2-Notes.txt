@@ -24,6 +24,13 @@ Q1. why we are making db in another folder (packages) ??? why not in user-app it
         --> b. initialise typescript.
                When typescript is initialised --> 
                --> c. update tsconfig.json content .... extend to base.json .....see tsconfig.json of another file.
+        --> c. Update the script of package.json
+                "scripts": {
+                    "build": "npx esbuild ./src/index.ts --bundle --platform=node --outfile=dist/index.js",
+                    "start": "node dist/index.js",
+                    "dev": "npm run build && npm run start"
+                }
+
 3. Adding prisma -->
     --> a. Install prisma in ( packages\db ) folder.....not in root folder.....Make sure it is installed successfully.
                --> Make Sure the app is not running at that time.

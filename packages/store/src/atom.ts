@@ -106,3 +106,18 @@ export const transferToUpiAtom = atom<{upi : string | null,amount : string | nul
     key : "toupi",
     default : null
 })
+export const verifyEmailPopupAtom = atom<{email : string | null,token : string | null} | null>({
+    key : "changePasswordPopup",
+    default : null
+})
+
+
+export const socketAtom = atom<WebSocket | null>({
+    key : "socket",
+    default : null
+})
+
+export const notificationAtom = atom<{from : string,amount : string,phone : string | null,upi : string | null} | null>({
+    key : 'notification',
+    default : null
+})

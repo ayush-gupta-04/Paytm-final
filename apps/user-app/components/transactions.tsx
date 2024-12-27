@@ -64,7 +64,7 @@ export default function TransactionsWithFilter({transactions} : {transactions : 
                     <div className="text-xl font-medium"> Transactions</div>
                     <div className="bg-[#07CBFD] mx-4 px-6 py-1 rounded-lg" onClick={() => {setHide(!hide)}}> filter</div>
                 </div>
-                <div className="my-2 h-[530px] overflow-auto" style={{scrollbarWidth : "thin",}}>
+                <div className="my-2 h-[530px] overflow-auto " style={{scrollbarWidth : "thin",}}>
                 <BackgroundSupporter hide = {!showTnxID}></BackgroundSupporter>
                     {transactionsState && transactionsState.map((tnx,id) => {
                         if(isTypeOnRamp(tnx)){

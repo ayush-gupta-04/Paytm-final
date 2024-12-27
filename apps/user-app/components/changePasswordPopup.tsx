@@ -11,6 +11,7 @@ import BackIcon from "./backIcon";
 import Success from "@repo/ui/success";
 import Button1 from "./button";
 import { ChangePassword } from "../app/action/changepass";
+import Loader from "./loader";
 
 
 type BackendResponse = {
@@ -85,6 +86,7 @@ export default function ChangePasswordPopup({onSuccess,onBack,step,setStep} : {o
                     )}
                 </div>
                 <div>
+                {loading && <div className="py-2 transition-all scale-75"><Loader></Loader></div>}
                     <Success message={response.message} success = {response.success}></Success>
                     <Error message={response.message} success = {response.success}></Error>
                 </div>
