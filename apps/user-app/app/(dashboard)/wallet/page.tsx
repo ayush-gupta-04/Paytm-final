@@ -28,23 +28,33 @@ async function getUpi(){
 }
 async function getBalance(){
     const session = await getServerSession(NEXT_AUTH);
-    const balance = await prisma.balance.findFirst({
-        where: {
-            userId: (session?.user?.id)
+    try {
+        const balance = await prisma.balance.findFirst({
+            where: {
+                userId: (session?.user?.id)
+            }
+        });
+        return {
+            amount: balance?.amount || 0,
+            locked: balance?.locked || 0
         }
-    });
-    return {
-        amount: balance?.amount || 0,
-        locked: balance?.locked || 0
+    } catch (error) {
+        return {
+            amount: 0,
+            locked: 0
+        }
     }
 }
 
 export default async function TransactionPage(){
     const initialUpi = await getUpi();
     const balanceData = await getBalance();
+    const safeUpi = {
+        upi : initialUpi
+    }
     return(
         <div className="h-[770px] overflow-auto w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] " style={{scrollbarWidth : "thin"}}>
-            <UpiHeading initialUpi={initialUpi}></UpiHeading>
+            <UpiHeading initialUpi={safeUpi}></UpiHeading>
             <Balance amount={balanceData.amount} locked={balanceData.locked}></Balance>
             <AddMoney></AddMoney>
         </div>

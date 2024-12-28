@@ -138,3 +138,11 @@ PROBLEMS :
    --> If i want that if a div is present then onClicking it nothing should happen --> pointer-events-none
 
 8. No transition in conditional rendering.
+
+
+9. If from a server component you pass a value to a client compoenent which can possibly be null...then it will throw error.
+   To resolve it :-   const upi = await getUpi();  // upi : string | null
+                      const safeUpi = {
+                        initialUpi : upi
+                      }
+                      Now pass this safeUpi to the client component.

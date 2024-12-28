@@ -8,9 +8,10 @@ import NotificationPopup from "../../components/notification";
 
 export default async function MainAppLayout({children} : {children : React.ReactNode}){
     const session = await getServerSession(NEXT_AUTH);
+    const safeUserId = {userId :session.user.id }
     return(
         <div className="h-screen relative">
-            <AppBarClient userId = {session.user.id}></AppBarClient>
+            <AppBarClient userIdObj = {safeUserId}></AppBarClient>
             <div className="flex">
                 <div className="w-72 bg-[#ECF5FC] pb-10 px-6 flex flex-col gap-2 justify-center h-[770px]">
                     <SidebarItem href={"/dashboard"}  icon={<HomeIcon />} title="Home" ></SidebarItem>

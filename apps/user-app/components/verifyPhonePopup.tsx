@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction, useState } from "react"
 import { useForm } from "react-hook-form";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import {  useSetRecoilState } from "recoil";
 import BackIcon from "./backIcon";
 import Error from "@repo/ui/error";
 import Button1 from "./button";
@@ -23,7 +23,7 @@ export default function VerifyPhonePopup({onSuccess,onBack,setStep,step} : {onSu
         name : null
     })
     const[loading,setLoading] = useState(false)
-    const[transferToPhone,setTransferToPhone] = useRecoilState(transferToPhoneAtom);
+    const setTransferToPhone = useSetRecoilState(transferToPhoneAtom);
     const {register,handleSubmit,formState : {errors},reset} = useForm<phoneFormat>({resolver : zodResolver(phoneSchema)});
     async function onFormSubmit(data : phoneFormat){
         setResponse({success : null,message : "",name : ""})

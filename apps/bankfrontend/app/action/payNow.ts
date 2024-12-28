@@ -84,7 +84,6 @@ export async function payNowViaHdfc(data : PaymentType){
                 }
             }
         } catch (error) {
-            console.log(error)
             return{
                 success : false,
                 message : "HDFC server is down!"

@@ -13,19 +13,6 @@ import prisma from "@paytm-repo/db/client"
 import UpiHeading from "../../../components/upiheading"
 import ChangePasswordElement from "../../../components/changepassword"
 
-type Details = {
-    firstname :  string | null,
-    lastname :  string | null,
-    email : string | null,
-    phone : string | null,
-    upi : string | null,
-    dob : string | null,
-    gender : string | null,
-    city : string | null,
-    country : string | null,
-    pincode : string | null,
-    address : string | null
-}
 async function getDetails() {
     const session = await getServerSession(NEXT_AUTH);
     if(!session){
@@ -48,57 +35,81 @@ async function getDetails() {
             }
         }
     }
-    const data = await prisma.user.findFirst({
-        where : {
-            id : session.user.id
-        },
-        select : {
-            id : false,
-            isEmailVerified : false,
-            password : false,
-            firstname : true,
-            lastname : true,
-            email : true,
-            phone : true,
-            upi : true,
-            dob : true,
-            gender : true,
-            address : {
-                select : {
-                    city : true,
-                    country : true,
-                    pincode : true,
-                    address : true
+    try {
+        const data = await prisma.user.findFirst({
+            where : {
+                id : session.user.id
+            },
+            select : {
+                id : false,
+                isEmailVerified : false,
+                password : false,
+                firstname : true,
+                lastname : true,
+                email : true,
+                phone : true,
+                upi : true,
+                dob : true,
+                gender : true,
+                address : {
+                    select : {
+                        city : true,
+                        country : true,
+                        pincode : true,
+                        address : true
+                    }
                 }
             }
+        })
+        return {
+            personal : {
+                firstname : data?.firstname  || null,
+                lastname : data?.lastname || null,
+                dob : data?.dob || null,
+                gender : data?.gender || null,
+            }
+            ,
+            email : data?.email || null,
+            phone : data?.phone || null,
+            upi : data?.upi || null,
+            
+            address : {
+                address : data?.address[0]?.address || null,
+                city : data?.address[0]?.city || null,
+                pincode : data?.address[0]?.pincode || null,
+                country : data?.address[0]?.country || null
+            }
         }
-    })
-    return {
-        personal : {
-            firstname : data?.firstname  || null,
-            lastname : data?.lastname || null,
-            dob : data?.dob || null,
-            gender : data?.gender || null,
-        }
-        ,
-        email : data?.email || null,
-        phone : data?.phone || null,
-        upi : data?.upi || null,
-        
-        address : {
-            address : data?.address[0]?.address || null,
-            city : data?.address[0]?.city || null,
-            pincode : data?.address[0]?.pincode || null,
-            country : data?.address[0]?.country || null
+    } catch (error) {
+        return {
+            personal : {
+                firstname :  null,
+                lastname :  null,
+                dob : null,
+                gender : null,
+            },
+            email : null,
+            phone : null,
+            upi : null,
+            
+            address : {
+                city : null,
+                country : null,
+                pincode : null,
+                address : null
+            }
         }
     }
 }
 
 export default async function SettingsPage(){
     const details = await getDetails();
+    const safeUpi = {
+        upi : details.upi
+    }
     return (
         <div className="h-[770px] overflow-auto w-full flex flex-col py-4 px-4 gap-8 bg-[#ECF5FC] relative" style={{scrollbarWidth : "thin"}}>
-            <UpiHeading initialUpi = {details.upi}></UpiHeading>
+            <UpiHeading initialUpi = {safeUpi}></UpiHeading>
             <div className="flex flex-col gap-3">
                 <div className="w-fit h-fit px-3 py-2 bg-[#0560FD] text-white rounded-lg">
                     Personal settings

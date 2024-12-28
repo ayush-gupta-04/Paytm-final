@@ -145,7 +145,7 @@ function ContactUsCard({hide,setHide} : {hide : boolean,setHide: Dispatch<SetSta
                         </div>
                         <div className="flex flex-row gap-2">
                             <div className="bg-slate-300 hover:bg-slate-400 w-full py-3 rounded-lg active:scale-95 transition-all text-center" aria-disabled = {loading} onClick={(e) => {reset();setResponse({success : null,message : ""});setHide(true);e.stopPropagation()}}>Cancel</div> {/*If i close the form , Values must reset to default..or just reset(). */}
-                            <Button1 loading = {loading} text="Save Changes"></Button1>
+                            <Button1 loading = {loading} text="Report"></Button1>
                         </div>
                     </form>
                 </div>

@@ -134,7 +134,7 @@ function OnRampTnxDetails({amount,provider,status,tnxId,time,setShow} : {amount 
             <div className=" flex flex-col gap-1 py-2 border-b-2 px-3">
                 <div className="text-blue-600">Amount</div>
                 <div className="  flex gap-2">
-                    <div className="text-5xl font-medium">{amount}</div>
+                    <div className="text-5xl font-medium">{amount/100}</div>
                     <div className="self-end">INR</div>
                     {status == 'success' && <div className="self-center"><Tick></Tick></div>}
                 </div>

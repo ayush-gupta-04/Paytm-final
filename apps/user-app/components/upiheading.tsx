@@ -3,14 +3,14 @@ import { upiAtom } from "@paytm-repo/store/atom"
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil"
 
-export default function UpiHeading({initialUpi} : {initialUpi : string | null}){
+export default function UpiHeading({initialUpi} : {initialUpi : {upi : string | null}}){
     // alert("hello")
     const[upi,setUpi] = useRecoilState(upiAtom);
     useEffect(() => {
         //This effect was running in first render...and if the render is old one then setUpi was being called with the old values.
         //thats y i was getting a stale value until it loaded again on server.
         if(upi == null){
-            setUpi(initialUpi);
+            setUpi(initialUpi.upi);
             
         }
 

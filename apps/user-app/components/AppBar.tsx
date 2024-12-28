@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
-export default function AppBarClient({userId} : {userId : any}){
+export default function AppBarClient({userIdObj} : {userIdObj : {userId : any}}){
     const router = useRouter();
     const session = useSession();
     const[socket,setSocket] = useRecoilState(socketAtom);
     const setNotification = useSetRecoilState(notificationAtom);
     useEffect(() => {
-        if(userId){
-            const socket = new WebSocket(`ws://localhost:8080?id=${userId}`);
+        if(userIdObj.userId){
+            const socket = new WebSocket(`ws://localhost:8080?id=${userIdObj.userId}`);
             socket.onopen = () => {
                 setSocket(socket)
             }
