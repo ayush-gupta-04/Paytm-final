@@ -1,16 +1,15 @@
 'use client'
 
 import { notificationAtom } from "@paytm-repo/store/atom"
-import { useRecoilState, useRecoilValue } from "recoil"
+import { useRecoilState } from "recoil"
 
 export default function NotificationPopup(){
     const [notification,setNotification] = useRecoilState(notificationAtom)
     if(notification){
         setTimeout(() => {
             setNotification(null)
-        },4000)
+        },7000)
     }
-    console.log(notification)
     return(
         <>
         {<div className={`fixed bottom-5 right-5 w-1/5 fit bg-white shadow-slate-900 shadow-2xl rounded-lg transition-all duration-300 z-20 ${!notification?'translate-y-96':''}`}>

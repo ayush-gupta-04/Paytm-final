@@ -1,7 +1,5 @@
-import { atom, atomFamily, selector } from "recoil";
-import { recoilPersist } from 'recoil-persist';
+import { atom  } from "recoil";
 import {Gender} from "prisma/prisma-client"
-const {persistAtom} = recoilPersist();
 
 export const loginEmailAtom = atom({
     key : "loginEmail",

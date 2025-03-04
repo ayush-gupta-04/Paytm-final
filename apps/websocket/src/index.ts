@@ -28,4 +28,10 @@ wss.on('connection',(ws,req) => {
     ws.on('error',(err) => {
         console.log(err)
     })
+    ws.on('close', () => { 
+        console.log(`Connection closed for user: ${userId}`);
+        if(userId){
+            users.delete(userId)
+        }
+    })
 })

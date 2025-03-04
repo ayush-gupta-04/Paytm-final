@@ -7,7 +7,6 @@ import bcrypt from "bcrypt"
 
 export async function p2pTransferToPhone(data : {phone : string , amount : string, tpin : string}){
     const format = p2pTransferToPhoneSchema.safeParse(data);
-    console.log(data)
     if(format.success){
         const amount = Number(data.amount)*100;
         const session = await getServerSession(NEXT_AUTH);
@@ -21,7 +20,9 @@ export async function p2pTransferToPhone(data : {phone : string , amount : strin
                         phone : true,
                         upi : true,
                         tpin : true,
-                        id : true
+                        id : true,
+                        firstname : true,
+                        lastname : true
                     }
                 })
                 if(FromUser && FromUser.tpin){
@@ -97,13 +98,28 @@ export async function p2pTransferToPhone(data : {phone : string , amount : strin
                                     if(result.success){
                                         return{
                                             success : true,
-                                            message : "Successfully Transfered!"
+                                            message : "Successfully Transfered!",
+                                            data : {
+                                                receiverId : toUser.id,
+                                                message : {
+                                                    from : FromUser.firstname + " " + FromUser.lastname,
+                                                    amount : data.amount,
+                                                    phone : FromUser.upi?null:FromUser.phone,
+                                                    upi : FromUser.upi?FromUser.upi:null,
+                                                }
+                                            }
                                         }
                                     }
                                 } catch (error) {
+                                    if(error == 'if'){
+                                        return{
+                                            success : false,
+                                            message : "Insufficient funds"
+                                        }
+                                    }
                                     return{
                                         success : false,
-                                        message : error
+                                        message : "Something went down!"
                                     }
                                 }
                             }else{
@@ -209,7 +225,7 @@ export async function p2pTransferToUpi(data : {upi : string , amount : string, t
                                             }
                                         })
                                         if(!balance || balance.amount < Number(amount)){
-                                            throw new Error("Insufficient Funds")
+                                            throw new Error("if")
                                         }
                                         await tnx.balance.update({
                                             where : {
@@ -262,9 +278,15 @@ export async function p2pTransferToUpi(data : {upi : string , amount : string, t
                                         }
                                     }
                                 } catch (error) {
+                                    if(error == 'if'){
+                                        return{
+                                            success : false,
+                                            message : "Insufficient funds"
+                                        }
+                                    }
                                     return{
                                         success : false,
-                                        message : error
+                                        message : "Something went down!"
                                     }
                                 }
                             }else{

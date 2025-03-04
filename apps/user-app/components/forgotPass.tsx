@@ -1,13 +1,10 @@
 'use client'
 import { zodResolver } from "@hookform/resolvers/zod";
-import {emailFormat, emailSchema, SigninFormat, signinSchema } from "@repo/schema/zod";
+import {emailFormat, emailSchema } from "@repo/schema/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Image from "next/image";
 import { useSetRecoilState } from "recoil";
 import { changePasswordPopupAtom } from "@paytm-repo/store/atom";
 import VerifyOtpPopup from "./verifyOtpPopup";

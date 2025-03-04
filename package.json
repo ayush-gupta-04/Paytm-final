@@ -21,6 +21,8 @@
     "packages/*"
   ],
   "dependencies": {
+    "@edgestore/react": "^0.2.2",
+    "@edgestore/server": "^0.2.2",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
     "react-transition-group": "^4.4.5",

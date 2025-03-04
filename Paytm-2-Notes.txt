@@ -146,3 +146,15 @@ PROBLEMS :
                         initialUpi : upi
                       }
                       Now pass this safeUpi to the client component.
+
+
+
+10. Never do this --> 
+    try{
+        //do something
+    }catch(err){
+        return{
+            success : false,
+            message : err               //this err can be an object and since message accepts a string .. it will definetly throw an error.
+        }
+    }

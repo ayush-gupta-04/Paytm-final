@@ -1,6 +1,6 @@
 'use client'
 import { zodResolver } from "@hookform/resolvers/zod";
-import {emailFormat, emailSchema, newOtpFormat, newOtpSchema, SigninFormat, signinSchema } from "@repo/schema/zod";
+import {SigninFormat, signinSchema } from "@repo/schema/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
 import { signIn } from "next-auth/react";

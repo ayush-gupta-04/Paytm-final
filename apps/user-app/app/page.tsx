@@ -1,10 +1,11 @@
 import AppBarClient from "../components/AppBar";
 import RootLayout from "./layout";
 export default function Home(){
+  const safeUserId = {userId : null }
   return (
     <>
       <RootLayout>
-        <AppBarClient userId={null}></AppBarClient>
+        <AppBarClient userIdObj = {safeUserId}></AppBarClient>
         <div className="bg-[#f5f7fa] h-[770px] overflow-auto" style={{scrollbarWidth :"thin"}}>
           <div className="bg-red-400 w-full"><img src="./landing4.png" /></div>
           <div className="h-screen w-full flex flex-col justify-center items-center gap-8 font-bold">

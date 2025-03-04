@@ -30,6 +30,7 @@ export async function LoginUser(data : {email : string , password : string}){
                 }
             }
         } catch (error) {
+            console.log(error)
             return{
                 success : false,
                 message : "Something went wrong!"

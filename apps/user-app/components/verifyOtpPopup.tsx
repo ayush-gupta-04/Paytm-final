@@ -2,11 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { changePasswordPopupAtom } from "@paytm-repo/store/atom";
-import { emailFormat, emailSchema, newOtpFormat, newOtpSchema } from "@repo/schema/zod";
+import {newOtpFormat, newOtpSchema } from "@repo/schema/zod";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { ShootMailForPassChange } from "../app/action/shootmailforpasschange";
+import { useRecoilState } from "recoil";
 import BackIcon from "./backIcon";
 import Success from "@repo/ui/success";
 import Error from "@repo/ui/error";

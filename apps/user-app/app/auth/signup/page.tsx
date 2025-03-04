@@ -9,9 +9,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { CreateNewAccount } from "../../action/signup";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useRecoilState } from "recoil";
-import { changePasswordPopupAtom } from "@paytm-repo/store/atom";
-import { verifyingEmailOtp, verifyingPassOtpForChangePass } from "../../action/verify";
+import { verifyingEmailOtp } from "../../action/verify";
 import BackIcon from "../../../components/backIcon";
 import Button1 from "../../../components/button";
 

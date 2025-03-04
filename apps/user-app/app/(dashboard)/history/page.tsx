@@ -18,7 +18,7 @@ async function getOnRampTransactions(){
             }
         })
         return data.map((tnx) => {
-            return{
+            return {
                 onRamp : true,
                 send : false,
                 p2p : false,
@@ -171,3 +171,4 @@ export default async function HistoryOfTransaction(){
         </div>
     )
 }
+

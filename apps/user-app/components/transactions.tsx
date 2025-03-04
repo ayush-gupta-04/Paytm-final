@@ -231,6 +231,7 @@ function BlueTick(){
 }
 
 const  Filter = ({hide,transactions} : {hide : boolean,transactions : CombinedTransactions[]}) => {
+    //we always filter the whole transaction...we don't filter the changed filtered transactions.
     const[filter,setFilter] = useState("");
     const setTransactionState = useSetRecoilState(transactionAtom)
     useEffect(() => {

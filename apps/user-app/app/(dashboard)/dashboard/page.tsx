@@ -174,7 +174,7 @@ export default async function DashBoard(){
                 <PayToUpiId></PayToUpiId>
                 <WithdrawFromWallet></WithdrawFromWallet>
             </div>
-            <img src="./paytmImg1.svg" alt="" className="w-4/5 self-center"/>
+            <img src="./paytmImg1.svg" alt="" className="w-4/5 self-center h-[613px]"/>
             <div className="flex flex-col gap-3 h-full">
                 <div className="w-fit h-fit px-3 py-2 bg-[#0560FD] text-white rounded-lg">
                     Recent Transactions
