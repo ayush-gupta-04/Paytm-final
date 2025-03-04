@@ -16,7 +16,7 @@ type BackendResponse = {
     message : string,
     name : string | null
 }
-export default function VerifyPhonePopup({onSuccess,onBack,setStep,step} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
+export default function VerifyPhonePopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : "",
@@ -24,7 +24,7 @@ export default function VerifyPhonePopup({onSuccess,onBack,setStep,step} : {onSu
     })
     const[loading,setLoading] = useState(false)
     const setTransferToPhone = useSetRecoilState(transferToPhoneAtom);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<phoneFormat>({resolver : zodResolver(phoneSchema)});
+    const {register,handleSubmit,formState : {errors}} = useForm<phoneFormat>({resolver : zodResolver(phoneSchema)});
     async function onFormSubmit(data : phoneFormat){
         setResponse({success : null,message : "",name : ""})
         if(response.success){

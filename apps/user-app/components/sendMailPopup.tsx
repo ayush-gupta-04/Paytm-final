@@ -6,7 +6,7 @@ import { emailFormat, emailSchema } from "@repo/schema/zod";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSetRecoilState } from "recoil";
-import { ShootMailForPassChange, ShootMailForPassChangeWhenLoggedIn } from "../app/action/shootmailforpasschange";
+import { ShootMailForPassChangeWhenLoggedIn } from "../app/action/shootmailforpasschange";
 import BackIcon from "./backIcon";
 import Success from "@repo/ui/success";
 import Error from "@repo/ui/error";
@@ -18,7 +18,7 @@ type BackendResponseWithToken = {
     otpToken : string | null
 }
 
-export default function SendEmailPopup({onSuccess,onBack,step,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
+export default function SendEmailPopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
     const[response,setResponse] = useState<BackendResponseWithToken>({
         success : null,
         message : "",
@@ -26,7 +26,7 @@ export default function SendEmailPopup({onSuccess,onBack,step,setStep} : {onSucc
     })
     const[loading,setLoading] = useState(false)
     const setChangePasswordPopup = useSetRecoilState(changePasswordPopupAtom);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<emailFormat>({resolver : zodResolver(emailSchema)});
+    const {register,handleSubmit,formState : {errors}} = useForm<emailFormat>({resolver : zodResolver(emailSchema)});
     async function onFormSubmit(data : emailFormat){
         setLoading(true);
         const res = await ShootMailForPassChangeWhenLoggedIn(data) as BackendResponseWithToken;

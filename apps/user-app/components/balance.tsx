@@ -1,8 +1,3 @@
-import { getServerSession } from "next-auth"
-import { NEXT_AUTH } from "../lib/auth"
-import prisma from "@paytm-repo/db/client";
-
-
 
 export async function Balance({amount,locked} : {amount : number,locked : number}){
     

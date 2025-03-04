@@ -1,6 +1,6 @@
 'use client'
 import { upiAtom } from "@paytm-repo/store/atom"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRecoilState } from "recoil"
 
 export default function UpiHeading({initialUpi} : {initialUpi : {upi : string | null}}){
@@ -21,7 +21,7 @@ export default function UpiHeading({initialUpi} : {initialUpi : {upi : string | 
             const text = divRef.current.innerText;
             navigator.clipboard.writeText(text).then(() => {
                 alert("Copied to Clipboard")
-            },(err) => {
+            },() => {
                 console.log("Cannot copy")
             });
         }

@@ -1,7 +1,4 @@
 'use client'
-import { transactionAtom } from "@paytm-repo/store/atom";
-import { useEffect, useMemo, useState } from "react"
-import { useRecoilState, useSetRecoilState } from "recoil";
 type onRampTnx = {
     onRamp: boolean;
     send: boolean;

@@ -8,10 +8,9 @@ import BackIcon from "./backIcon";
 import Error from "@repo/ui/error";
 import Button1 from "./button";
 import AcknowledgementPopup from "./ack";
-import VerifyUpiPopup from "./verifyUpiPopup";
 import {  useRecoilValue, } from "recoil";
-import { socketAtom, transferToPhoneAtom, transferToUpiAtom } from "@paytm-repo/store/atom";
-import { p2pTransferToPhone, p2pTransferToUpi } from "../app/action/p2pTransferToPhoneUpi";
+import { socketAtom, transferToPhoneAtom } from "@paytm-repo/store/atom";
+import { p2pTransferToPhone} from "../app/action/p2pTransferToPhoneUpi";
 import Loader from "./loader";
 import { amountFormat, amountSchema, tpinFormat, tpinSchema } from "@repo/schema/zod";
 import VerifyPhonePopup from "./verifyPhonePopup";
@@ -61,7 +60,7 @@ type BackendResponse = {
 }
 
 
-function EnterAmountPopup({onSuccess,onBack,setStep,step} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
+function EnterAmountPopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : "",
@@ -134,7 +133,7 @@ type BackendResponseWithData = {
 }
 
 
-function EnterTPINpopup({onSuccess,onBack,setStep,step} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
+function EnterTPINpopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
     const[response,setResponse] = useState<BackendResponseWithData>({
         success : null,
         message : "",
@@ -143,7 +142,7 @@ function EnterTPINpopup({onSuccess,onBack,setStep,step} : {onSuccess : () => voi
     const[loading,setLoading] = useState(false)
     const socket = useRecoilValue(socketAtom);
     const[transferToPhone,setTransferToPhone] = useRecoilState(transferToPhoneAtom);
-    const {register,handleSubmit,formState : {errors}} = useForm<tpinFormat>({resolver : zodResolver(tpinSchema)});
+    const {register,handleSubmit} = useForm<tpinFormat>({resolver : zodResolver(tpinSchema)});
     async function onFormSubmit(data : tpinFormat){
         setResponse({success : null,message : "",data : null})
         setLoading(true);

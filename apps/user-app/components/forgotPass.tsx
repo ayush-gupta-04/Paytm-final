@@ -70,7 +70,7 @@ type BackendResponseWithToken = {
 }
 
 
-function SendEmailPopup({onSuccess,onBack,step,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
+function SendEmailPopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
     const[response,setResponse] = useState<BackendResponseWithToken>({
         success : null,
         message : "",
@@ -78,7 +78,7 @@ function SendEmailPopup({onSuccess,onBack,step,setStep} : {onSuccess : () => voi
     })
     const[loading,setLoading] = useState(false)
     const setChangePasswordPopup = useSetRecoilState(changePasswordPopupAtom);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<emailFormat>({resolver : zodResolver(emailSchema)});
+    const {register,handleSubmit,formState : {errors}} = useForm<emailFormat>({resolver : zodResolver(emailSchema)});
     async function onFormSubmit(data : emailFormat){
         setLoading(true);
         const res = await ShootMailForPassChange(data) as BackendResponseWithToken;

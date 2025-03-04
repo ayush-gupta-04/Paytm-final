@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form";
 import { addUpiIdAction } from "../app/action/changeUpiPhone";
 import { AddUpiFormat, AddUpiSchema } from "@repo/schema/zod";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState} from "recoil";
 import { upiAtom } from "@paytm-repo/store/atom";
 import Button1 from "./button";
 type BackendResponse = {

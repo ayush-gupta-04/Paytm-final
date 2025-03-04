@@ -18,14 +18,14 @@ type BackendResponse = {
     message : string
 }
 
-export default function VerifyOtpPopup({onSuccess,onBack,step,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
+export default function VerifyOtpPopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : "",
     })
     const[loading,setLoading] = useState(false)
     const [changePasswordPopup,setChangePasswordPopup] = useRecoilState(changePasswordPopupAtom);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<newOtpFormat>({resolver : zodResolver(newOtpSchema)});
+    const {register,handleSubmit} = useForm<newOtpFormat>({resolver : zodResolver(newOtpSchema)});
     async function onFormSubmit(data : newOtpFormat){
         setLoading(true);
         const res = await verifyingPassOtpForChangePass({otp : data.otp1 + data.otp2 + data.otp3 + data.otp4 + data.otp5 + data.otp6,otpToken : changePasswordPopup?.token || ""}) as BackendResponse;

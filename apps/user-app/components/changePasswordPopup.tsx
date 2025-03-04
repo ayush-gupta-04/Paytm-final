@@ -18,7 +18,7 @@ type BackendResponse = {
     message : string
 }
 
-export default function ChangePasswordPopup({onSuccess,onBack,step,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
+export default function ChangePasswordPopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,step : string | null,setStep : Dispatch<SetStateAction<string | null>>}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : "",

@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ReportProblemFormat, ReportProblemSchema } from "@repo/schema/zod";
 import Error from "@repo/ui/error";
 import Success from "@repo/ui/success";
-import React , { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React , { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import ReportProblemAction from "../app/action/report";
 import Button1 from "./button";
@@ -28,7 +28,6 @@ function ContactUsCard({hide,setHide} : {hide : boolean,setHide: Dispatch<SetSta
         success : null,
         message : ""
     })
-    const[showCopied,setShowCopied] = useState(false);
     const[loading,setLoading] = useState(false);
     const {register,handleSubmit,formState : {errors},reset} = useForm<ReportProblemFormat>({resolver : zodResolver(ReportProblemSchema)});
     async function onSumbit(data : ReportProblemFormat){

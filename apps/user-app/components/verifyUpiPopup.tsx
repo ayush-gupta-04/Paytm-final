@@ -16,7 +16,7 @@ type BackendResponse = {
     message : string,
     name : string | null
 }
-export default function VerifyUpiPopup({onSuccess,onBack,setStep,step} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
+export default function VerifyUpiPopup({onSuccess,onBack,setStep} : {onSuccess : () => void,onBack : () => void,setStep : Dispatch<SetStateAction<string | null>>,step : string | null}){
     const[response,setResponse] = useState<BackendResponse>({
         success : null,
         message : "",
@@ -24,7 +24,7 @@ export default function VerifyUpiPopup({onSuccess,onBack,setStep,step} : {onSucc
     })
     const[loading,setLoading] = useState(false)
     const[transferToUpi,setTransferToUpi] = useRecoilState(transferToUpiAtom);
-    const {register,handleSubmit,formState : {errors},reset} = useForm<UpiFormat>({resolver : zodResolver(UpiSchema)});
+    const {register,handleSubmit,formState : {errors}} = useForm<UpiFormat>({resolver : zodResolver(UpiSchema)});
     async function onFormSubmit(data : UpiFormat){
         setResponse({success : null,message : "",name : ""})
         if(response.success){
