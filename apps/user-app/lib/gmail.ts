@@ -13,7 +13,7 @@ export async function sendMail({email, otp }: SendEmailArg){
         host: "smtp.gmail.com",
         auth : {
             user : process.env.GMAIL,
-            pass : process.env.GAMIL_APP_PASSWORD,
+            pass : process.env.GMAIL_APP_PASSWORD,
         }
     });
     const result = await transport.sendMail({
