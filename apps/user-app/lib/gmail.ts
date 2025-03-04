@@ -89,3 +89,22 @@ export async function sendMail({email, otp }: SendEmailArg){
     })
     return result;
 }
+
+export async function sendReport({sender,subject,body,transactionId} : {sender : string,subject : string,body : string,transactionId : string}){
+    const transport = nodemailer.createTransport({
+        service : 'gmail',
+        port : 587,
+        host: "smtp.gmail.com",
+        auth : {
+            user : process.env.GMAIL,
+            pass : process.env.GAMIL_APP_PASSWORD,
+        }
+    });
+    const result = await transport.sendMail({
+        from: sender,
+        to: 'ag04062004@gmail.com',
+        subject: subject + "    transaction ID : " + transactionId,
+        text: body
+    })
+    return result;
+}

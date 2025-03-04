@@ -1,7 +1,7 @@
 'use server'
 import  prisma  from "@paytm-repo/db/client";
 import { emailSchema } from "@repo/schema/zod";
-import { sendMail } from "../../lib/mail";
+import { sendMail } from "../../lib/gmail";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../../lib/auth";
 

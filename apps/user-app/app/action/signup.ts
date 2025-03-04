@@ -3,7 +3,7 @@ import {SignupFormat} from "@repo/schema/zod";
 import prisma from "@paytm-repo/db/client"
 import { signupSchema } from "@repo/schema/zod";
 import bcrypt from "bcrypt";
-import { sendMail } from "../../lib/mail";
+import { sendMail } from "../../lib/gmail";
 import crypto from "crypto"
 
 export async function CreateNewAccount(user : SignupFormat){

@@ -1,6 +1,6 @@
 'use server'
 import { ReportProblemFormat, ReportProblemSchema } from "@repo/schema/zod";
-import { sendReport } from "../../lib/mail";
+import { sendReport } from "../../lib/gmail";
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../../lib/auth";
 
