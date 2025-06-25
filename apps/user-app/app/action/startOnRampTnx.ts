@@ -25,6 +25,7 @@ export async function startOnRampTnx(data : PaymentInfo){
                     webhookUrl : "http://localhost:3003/api/paytm/webhook",
                     userId : session.user.id
                 })
+                console.log(bankToken.data);
                 if(bankToken.data.token){
                     try {
                         const onRamp = await prisma.onRampTransaction.create({
@@ -57,6 +58,7 @@ export async function startOnRampTnx(data : PaymentInfo){
                     }
                 }
             } catch (error) {
+                console.log(error);
                 return{
                     success : false,
                     message : "Something wrong with the Bank server"
